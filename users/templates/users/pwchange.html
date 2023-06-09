@@ -1,0 +1,25 @@
+{% extends 'common/blank.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row">
+  <div class="col-4"></div>
+  <div class="col-4">
+  <!-- /.login-logo -->
+  <div class="card">
+    <div class="card-body login-card-body">
+      <p class="login-box-msg translate">LOGIN</p>
+{% if form.errors %}
+      <div class="alert alert-danger translate">LOGIN_FAILED</div>
+{% endif %}
+      <form action="{% url 'pwchange' %}" method="post">
+        {{ form.as_p }}
+      </form>
+    <!-- /.login-card-body -->
+  </div>
+</div>
+</div>
+</div>
+
+<!-- /.login-box -->
+{% endblock %}

@@ -1,0 +1,52 @@
+name;lang;text
+ACCOUNTS;de;Konten
+ACCOUNTS_NUMBER;de;Kontoanzahl
+ACCOUNT_CREATED;de;Konto erfolgreich angelegt.
+ACCOUNT_CREATION_FAILED;de;Anlegen des Kontos fehlgeschlagen. Bitte überpüfen Sie Ihre Eingaben
+ACCOUNT_DELETED;de;Konto erfolgreich entfernt.
+ACCOUNT_UPDATED;de;Konto erfolgreich aktualisiert.
+ACCOUNT_UPDATE_FAILED;de;Aktualisieren des Kontos fehlgeschlagen. Bitte überpüfen Sie Ihre Eingaben
+ALL;de;Alle
+BALANCE;de;Kontostand
+BUDGETS;de;Budgets
+CATEGORIES;de;Kategorien
+CATEGORY_CREATED;de;Kategorie erfolgreich angelegt.
+CATEGORY_CREATION_FAILED;de;Anlegen der Kategorie fehlgeschlagen. Bitte überpüfen Sie Ihre Eingaben
+CATEGORY_UPDATED;de;Kategorie erfolgreich aktualisiert.
+CATEGORY_UPDATE_FAILED;de;Aktualisieren der Kategorie fehlgeschlagen. Bitte überpüfen Sie Ihre Eingaben
+CHANGE_PASSWORT;de;Passwort ändern
+CONFIRM_DELETION;de;Soll das Objekt wirklich gelöscht werden?
+CREATE_ACCOUNT;de;Konto anlegen
+CREATE_CATEGORY;de;Kategorie angelegen
+CREATE_EXPENSE;de;Ausgabe angelegen
+DASHBOARD;de;Dashboard
+DELETE;de;Löschen
+DELETE_OBJECT;de;Objekt löschen
+DETAILS;de;Details
+EXPENSES;de;Ausgaben
+EXPENSE_CREATED;de;Ausgabe erfolgreich angelegt.
+EXPENSE_CREATION_FAILED;de;Anlegen der Ausgabe fehlgeschlagen. Bitte überpüfen Sie Ihre Eingaben
+EXPENSE_DELETED;de;Ausgabe erfolgreich entfernt.
+EXPENSE_UPDATED;de;Ausgabe erfolgreich aktualisiert.
+EXPENSE_UPDATE_FAILED;de;Aktualisieren der Ausgabe fehlgeschlagen. Bitte überpüfen Sie Ihre Eingaben
+HISTORY;de;Verlauf
+LOADING;de;Lade Daten ...
+LOGIN;de;Benutzeranmeldung
+LOGIN_FAILED;de;Benutzername oder Password falsch!
+LOGOUT;de;Abmelden
+MY_ACCOUNT;de;Mein Konto
+NEW;de;Neu
+NO;de;Nein
+NOT_ENOUGH_MONEY;de;Kontostand nicht ausreichend.
+OPERATION_NOT_ALLOWED;de;Sie sind nicht berechtigt diese Aktion durchzuführen.
+PASSWORDS_NOT_IDENTICAL;de;Passwörter stimmen nicht über ein
+PASSWORD_UPDATED;de;Passwort erfolgreich geändert
+PERMISSION DENIED;de;Sie sind nicht berechtigt auf diese Seite zu zugreifen
+REMAINING_BUDGET;de;Restbudget
+REPORT;de;Bericht
+TOTAL_BUDGET;de;Gesamtbudget
+TOTAL_EXPENSES;de;Gesamtausgaben
+TOTAL_EXPENSES_MONTH;de;Ausgaben laufender Monat
+TOTAL_EXPENSES_YEAR;de;Jahresausgaben
+TOTAL_VALUE;de;Gesamtwert
+YES;de;Ja

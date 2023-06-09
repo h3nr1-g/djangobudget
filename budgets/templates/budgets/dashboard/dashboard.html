@@ -1,0 +1,37 @@
+{% extends 'common/blank.html' %}
+{% load static %}
+{% load bootstrap4 %}
+
+{% block js_css %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
+    <script src="{% static "common/js/ajax.js" %}"></script>
+    <script src="{% static "common/js/morris.min.js" %}"></script>
+    <script src="{% static "budgets/js/dashboard.js" %}"></script>
+    <link rel="stylesheet" href="{% static "common/css/morris.css" %}">
+{% endblock %}
+
+
+{% block content %}
+{% include "budgets/dashboard/stats.html" %}
+<div class="row">
+    <div class="col-12">
+        {% include "budgets/dashboard/graph.html" %}
+    </div>
+</div>
+<div class="row">
+    <div class="col-6">
+        {%with table=balance_table title=balance_table_title %}
+            {% include "common/tables/card.html" %}
+        {% endwith %}
+    </div>
+    <div class="col-6">
+        {%with table=expense_table title=expense_table_title %}
+            {% include "common/tables/card.html" %}
+        {% endwith %}
+    </div>
+</div>
+<script>
+   ajaxGet("{% url "budgets:dashboard_data" budget.id %}",loadData, ajaxFail);
+</script>
+
+{% endblock %}

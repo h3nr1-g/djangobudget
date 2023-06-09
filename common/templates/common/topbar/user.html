@@ -1,0 +1,14 @@
+{% if request.user.is_authenticated %}
+<li class="nav-item dropdown">
+    <a class="nav-link" data-toggle="dropdown" href="#">
+        <i class="far fa-user"></i>
+        {{request.user}}
+    </a>
+    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        <a href="{% url "users:details" %}" class="dropdown-item translate">MY_ACCOUNT</a>
+        <a href="{% url "users:pwchange" %}" class="dropdown-item translate">CHANGE_PASSWORT</a>
+        <a href="{% url "logout" %}" class="dropdown-item translate">LOGOUT</a>
+        <div class="dropdown-divider"></div>
+    </div>
+</li>
+{% endif %}

@@ -1,0 +1,18 @@
+{% extends 'common/blank.html' %}
+{% load static %}
+{% load bootstrap4 %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <form action="{%if url%}{{url}}{%endif%}" method="post" class="form">
+            {{ form.media }}
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            {% buttons %}
+                <button type="submit" style="width: 100%;" class="btn btn-lg btn-primary">Speichern</button>
+            {% endbuttons %}
+        </form>
+    </div>
+</div>
+{% endblock %}

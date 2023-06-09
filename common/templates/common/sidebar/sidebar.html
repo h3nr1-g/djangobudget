@@ -1,0 +1,121 @@
+{%load static %}
+<!-- Main Sidebar Container -->
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Logo -->
+    <a href="{% url "index" %}" class="brand-link">
+        <img src="{% static "common/img/db.png" %}" alt="KSL Logo" class="brand-image img-circle elevation-3"
+             style="opacity: .8">
+        <span class="brand-text font-weight-light">DjangoBudget</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        {% if user.is_authenticated %}
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                data-accordion="false">
+                <!-- Add icons to the links using the .nav-icon class
+                     with font-awesome or any other icon font library -->
+                <li class="nav-item menu-closed">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-file-invoice-dollar"></i>
+                        <p>
+                            <span class="translate">BUDGETS</span>
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        {% for b in my_budgets %}
+                        <li class="nav-item">
+                            <a href="{% url "budgets:dashboard" b.id %}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>{{b.name}}</p>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                {% if budget %}
+                <li class="nav-item">
+                    <a href="{% url "budgets:dashboard" budget.id %}" class="nav-link">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p class="translate">DASHBOARD</p>
+                    </a>
+                </li>
+                <li class="nav-item menu-closed">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-piggy-bank"></i>
+                        <p><span class="translate">ACCOUNTS</span><i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url "budgets:accounts_add" budget.id %}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p class="translate">NEW</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url "budgets:accounts_table" budget.id %}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p class="translate">ALL</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item menu-closed">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-file-invoice-dollar"></i>
+                        <p><span class="translate">EXPENSES</span><i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url "budgets:expenses_add" budget.id %}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p class="translate">NEW</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url "budgets:expenses_table" budget.id %}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p class="translate">ALL</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item menu-closed">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-layer-group"></i>
+                        <p><span class="translate">CATEGORIES</span><i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{% url "budgets:categories_add" budget.id %}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p class="translate">NEW</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url "budgets:categories_table" budget.id %}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p class="translate">ALL</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                {%if request.user == budget.owner %}
+                <li class="nav-item">
+                    <a href="{% url "budgets:edit" budget.id %}" class="nav-link">
+                        <i class="nav-icon fas fa-gear"></i>
+                        <p class="translate">BUDGET_SETTINGS</p>
+                    </a>
+                </li>
+                {%endif%}
+                {%endif%}
+            </ul>
+        </nav>
+        {% endif %}
+        <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>
