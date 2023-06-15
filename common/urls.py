@@ -1,6 +1,6 @@
 from django.urls import path
 
-from common.views import TranslateItemView,TranslationView
+from common.views import TranslateItemView, TranslationView
 
 urlpatterns = [
     path('translate/item', TranslateItemView.as_view(), name='translate'),

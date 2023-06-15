@@ -1,4 +1,4 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from common.models import TranslationEntry
 
@@ -17,5 +17,5 @@ class Command(BaseCommand):
             fh.write('name;lang;text\n')
             for te in TranslationEntry.objects.filter(**filter_args).order_by('name'):
                 fh.write(f'{te.name};{te.lang};{te.text}\n')
-                count +=1
+                count += 1
         print(f"Dumped {count} entries into {options['outfile']}")

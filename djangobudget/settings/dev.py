@@ -5,12 +5,23 @@ DEBUG = True
 
 INSTALLED_APPS += [
     'debug_toolbar',
+#    'django_nose',
 ]
+
+# Use nose to run all tests
+#TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+# Tell nose to measure coverage on the 'foo' and 'bar' apps
+#NOSE_ARGS = [
+#    '--with-coverage',
+#    '--cover-package=budgets,common,users',
+#    '--cover-html',
+#]
 
 MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware"] + MIDDLEWARE
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-=#i*natu9b%=uqk&qp@p@-lxq%5mri@@#ac*n(l&d15m0#daxm'
+SECRET_KEY = 'FOOBAR1234'
 
 ALLOWED_HOSTS = ['*']
 

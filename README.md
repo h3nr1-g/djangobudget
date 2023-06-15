@@ -7,7 +7,8 @@ DjangoBudget is a budget planing and expense tracking web application around the
 # Features
 * Manage multiple budgets
 * Manage your budget via individual accounts
-* Group your expenses
+* Group your expenses by custom categories
+* Create accounts with read and or write permissions per budget
 
 # How to use
 ## Docker

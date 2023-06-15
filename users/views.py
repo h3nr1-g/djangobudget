@@ -1,19 +1,12 @@
 from django.contrib import messages
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
 from django.urls import reverse
-from django.utils.decorators import method_decorator
-from django.views import View
 
 from budgets.models import Budget
 from budgets.tables import BudgetsTable
 from common.models import TranslationEntry
 from common.views import formpage_ctx, AuthenticatedUserView
 from users.forms import PasswordChangeForm, UserDetailsForm
-
-
-
 
 
 class PasswordChangeView(AuthenticatedUserView):
@@ -41,6 +34,6 @@ class UserDetailsView(AuthenticatedUserView):
         used_form = form or UserDetailsForm(instance=request.user)
         return {
             'table_title': TranslationEntry.get('BUDGETS'),
-            'table': BudgetsTable(Budget.my_budgets(request.user)),
+            'table': BudgetsTable(Budget.objects.filter(owner=request.user)),
             **formpage_ctx(request, None, used_form, reverse('users:details'))
         }

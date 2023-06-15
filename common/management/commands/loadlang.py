@@ -1,6 +1,6 @@
 import csv
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from common.models import TranslationEntry
 
@@ -15,13 +15,13 @@ class Command(BaseCommand):
         created = 0
         updated = 0
         with open(options['infile']) as fh:
-            reader = csv.DictReader(fh,delimiter =';')
+            reader = csv.DictReader(fh, delimiter=';')
             for row in reader:
                 try:
-                    te = TranslationEntry.objects.get(name=row['name'],lang=row['lang'])
+                    te = TranslationEntry.objects.get(name=row['name'], lang=row['lang'])
                     updated += 1
                 except TranslationEntry.DoesNotExist:
-                    te = TranslationEntry.objects.create(name=row['name'],lang=row['lang'])
+                    te = TranslationEntry.objects.create(name=row['name'], lang=row['lang'])
                     created += 1
                 finally:
                     te.text = row['text']

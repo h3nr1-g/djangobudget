@@ -1,5 +1,7 @@
 .idea/
 venv/
 migrations/
+cover/
+.coverage
 db.sqlite3
 *.pyc

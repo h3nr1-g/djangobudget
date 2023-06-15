@@ -1,15 +1,24 @@
 name;lang;text
+ACCESS_DENIED;de;Zugriff verweigert
+ACCOUNT;de;Konto
 ACCOUNTS;de;Konten
 ACCOUNTS_NUMBER;de;Kontoanzahl
 ACCOUNT_CREATED;de;Konto erfolgreich angelegt.
 ACCOUNT_CREATION_FAILED;de;Anlegen des Kontos fehlgeschlagen. Bitte überpüfen Sie Ihre Eingaben
 ACCOUNT_DELETED;de;Konto erfolgreich entfernt.
+ACCOUNT_LOCKED;de;Konto ist aktuell gesperrt
 ACCOUNT_UPDATED;de;Konto erfolgreich aktualisiert.
 ACCOUNT_UPDATE_FAILED;de;Aktualisieren des Kontos fehlgeschlagen. Bitte überpüfen Sie Ihre Eingaben
 ALL;de;Alle
+AMOUNT;de;Betrag
+AUTHOR;de;Autor
 BALANCE;de;Kontostand
 BUDGETS;de;Budgets
+BUDGET_SETTINGS;de;Budget Einstellungen
+BUDGET_UPDATED;de;Budget erfolgreich aktualisiert.
+BUDGET_UPDATE_FAILED;de;Aktualisieren des Budgets fehlgeschlagen. Bitte überpüfen Sie Ihre Eingaben
 CATEGORIES;de;Kategorien
+CATEGORY;de;Kategorie
 CATEGORY_CREATED;de;Kategorie erfolgreich angelegt.
 CATEGORY_CREATION_FAILED;de;Anlegen der Kategorie fehlgeschlagen. Bitte überpüfen Sie Ihre Eingaben
 CATEGORY_UPDATED;de;Kategorie erfolgreich aktualisiert.
@@ -19,6 +28,9 @@ CONFIRM_DELETION;de;Soll das Objekt wirklich gelöscht werden?
 CREATE_ACCOUNT;de;Konto anlegen
 CREATE_CATEGORY;de;Kategorie angelegen
 CREATE_EXPENSE;de;Ausgabe angelegen
+CREATION_DATE;de;Erstellt am
+CURRENCY;de;Währung
+CURRENT_BALANCE;de;Aktueller Kontostand
 DASHBOARD;de;Dashboard
 DELETE;de;Löschen
 DELETE_OBJECT;de;Objekt löschen
@@ -29,24 +41,43 @@ EXPENSE_CREATION_FAILED;de;Anlegen der Ausgabe fehlgeschlagen. Bitte überpüfen
 EXPENSE_DELETED;de;Ausgabe erfolgreich entfernt.
 EXPENSE_UPDATED;de;Ausgabe erfolgreich aktualisiert.
 EXPENSE_UPDATE_FAILED;de;Aktualisieren der Ausgabe fehlgeschlagen. Bitte überpüfen Sie Ihre Eingaben
+EXTERNAL_REFERENCE;de;Referenz
+FIELD_NAME;de;Feld
 HISTORY;de;Verlauf
+INTERNAL_ERROR_OCCURRED;de;Es ist ein interner Systemfehler aufgetreten.
 LOADING;de;Lade Daten ...
-LOGIN;de;Benutzeranmeldung
+LOCKED;de;Gesperrt
+LOGIN;de;Anmelden
 LOGIN_FAILED;de;Benutzername oder Password falsch!
 LOGOUT;de;Abmelden
 MY_ACCOUNT;de;Mein Konto
+NAME;de;Name
+NAME_ALREADY_IN_USE;de;Name bereits vergeben
 NEW;de;Neu
+NEW_VALUE;de;Neuer Wert
 NO;de;Nein
+NOTE;de;Bemerkung
 NOT_ENOUGH_MONEY;de;Kontostand nicht ausreichend.
+NUM_EXPENSES;de;Anzahl an Ausgaben
+OBJECT_NOT_FOUND;de;Die angeforderte Seite/Resource wurde nicht gefunden
+OLD_VALUE;de;Alter Wert
 OPERATION_NOT_ALLOWED;de;Sie sind nicht berechtigt diese Aktion durchzuführen.
+OWNER;de;Eigentümer
+PAGE_NOT_FOUND;de;Seite nicht gefunden
+PARENT_CATEGORY;de;Oberkategorie
 PASSWORDS_NOT_IDENTICAL;de;Passwörter stimmen nicht über ein
 PASSWORD_UPDATED;de;Passwort erfolgreich geändert
-PERMISSION DENIED;de;Sie sind nicht berechtigt auf diese Seite zu zugreifen
+PERMISSION_DENIED;de;Sie sind nicht berechtigt auf diese Seite zu zugreifen
 REMAINING_BUDGET;de;Restbudget
 REPORT;de;Bericht
+SAVE;de;Speichern
+SERVER_ERROR;de;Systemfehler
+START_BALANCE;de;Startbetrag
+TIMESTAMP;de;Zeitstempel
 TOTAL_BUDGET;de;Gesamtbudget
 TOTAL_EXPENSES;de;Gesamtausgaben
 TOTAL_EXPENSES_MONTH;de;Ausgaben laufender Monat
 TOTAL_EXPENSES_YEAR;de;Jahresausgaben
 TOTAL_VALUE;de;Gesamtwert
+UPDATED_BY;de;Aktualisiert von
 YES;de;Ja

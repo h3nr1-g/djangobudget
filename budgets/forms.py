@@ -38,11 +38,6 @@ class BudgetEditForm(forms.ModelForm):
 
 
 class AccountForm(forms.ModelForm):
-    currency = forms.ModelChoiceField(
-        Currency.objects.all(),
-        empty_label=None,
-        label='CURRENCY'
-    )
     name = forms.CharField(
         label='NAME',
         initial='',
@@ -56,12 +51,13 @@ class AccountForm(forms.ModelForm):
     locked = forms.BooleanField(
         label='LOCKED',
         required=False,
+        initial=False,
         widget=forms.Select(choices=())
     )
 
     class Meta:
         model = Account
-        fields = ['name', 'start_balance', 'currency', 'locked']
+        fields = ['name', 'start_balance', 'locked']
 
 
 class CategoryForm(forms.ModelForm):

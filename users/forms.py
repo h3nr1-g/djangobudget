@@ -57,5 +57,5 @@ class PasswordChangeForm(forms.Form):
 
 class UserDetailsForm(forms.ModelForm):
     class Meta:
-        fields = ('first_name','last_name','username','email')
+        fields = ('first_name', 'last_name', 'username', 'email')
         model = User

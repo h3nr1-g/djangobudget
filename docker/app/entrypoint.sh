@@ -21,10 +21,7 @@ while [ -z "$table_num" ] && [ "$db_rc" -eq "0" ]; do
     sleep 3
 done
 
-sleep 3
-python manage.py makemigrations budgets common users --noinput --no-color
-python manage.py migrate --noinput --no-color
-
+echo "Starting djangobudget application ..."
 gunicorn \
   --daemon \
   --bind 127.0.0.1:8888 \

@@ -26,3 +26,7 @@ try:
     urlpatterns.append(path('__debug__/', include('debug_toolbar.urls')))
 except Exception:
     print('Skip including of debug toolbar URLs')
+
+handler403 = 'common.views.error_403'
+handler404 = 'common.views.error_404'
+handler500 = 'common.views.error_500'

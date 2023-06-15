@@ -6,7 +6,7 @@ from budgets.models import Account, Expense, Category, ExpenseModification, Budg
 def make_actions_col(details_url_name, delelte_url_name=None, show_delete=True, exlcude_record_budget=False, **kwargs):
     bid = '' if exlcude_record_budget else 'record.budget.id'
     details = \
-        '<a href="{% url "' + details_url_name + '" '+bid+' record.id %}">' \
+        '<a href="{% url "' + details_url_name + '" ' + bid + ' record.id %}">' \
         '<button class="btn btn-sm btn-primary"><i class="fa-solid fa-circle-info"></i></button>' \
         '</a>'
 
@@ -106,8 +106,8 @@ class ExpensesTable(tables.Table):
     )
     amount = TemplateColumn(
         '{{record.amount|floatformat:2 }} {{record.account.currency.symbol}}',
-        verbose_name = 'AMOUNT',
-        attrs = {'th': {'class': 'translate'}},
+        verbose_name='AMOUNT',
+        attrs={'th': {'class': 'translate'}},
     )
     category = TemplateColumn(
         '<a href="{% url "budgets:category_details" record.budget.id record.category.id %}">{{ record.category }}</a>',
@@ -176,8 +176,9 @@ class ExpenseModificationsTable(tables.Table):
         verbose_name='NEW_VALUE',
         attrs={'th': {'class': 'translate'}},
     )
+
     class Meta:
-        orderable=False
+        orderable = False
         model = ExpenseModification
         template_name = 'django_tables2/bootstrap4.html'
         sequence = (
@@ -201,6 +202,7 @@ class ExpenseModificationsTable(tables.Table):
 
 class BudgetsTable(tables.Table):
     actions = make_actions_col('budgets:dashboard', show_delete=False, exlcude_record_budget=True)
+
     class Meta:
         model = Budget
         template_name = 'django_tables2/bootstrap4.html'

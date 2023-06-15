@@ -37,14 +37,11 @@ class Budget(models.Model):
         null=True,
         on_delete=models.SET_NULL,
     )
+    read_access = models.ManyToManyField(User, related_name='read')
+    write_access = models.ManyToManyField(User, related_name='write')
 
     def __str__(self):
         return self.name
-
-    @staticmethod
-    def my_budgets(user):
-        budgets = Budget.objects.all() if user.is_superuser else Budget.objects.filter(owner=user)
-        return budgets.order_by('name')
 
 
 class Category(models.Model):
@@ -74,7 +71,6 @@ class Category(models.Model):
         for c in my_children:
             c.descendants(elements)
 
-
     class Meta:
         unique_together = ('name', 'budget')
 
@@ -102,6 +98,7 @@ class Account(models.Model):
 
     def __str__(self):
         return self.name
+
     @property
     def currency(self):
         return self.budget.currency
@@ -170,6 +167,7 @@ class Expense(models.Model):
     note = models.TextField(
         **model_params.NULLABLE
     )
+
     def __str__(self):
         return self.name
 

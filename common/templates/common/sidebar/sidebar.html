@@ -17,6 +17,7 @@
                 data-accordion="false">
                 <!-- Add icons to the links using the .nav-icon class
                      with font-awesome or any other icon font library -->
+                {% if my_budgets %}
                 <li class="nav-item menu-closed">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-file-invoice-dollar"></i>
@@ -36,6 +37,7 @@
                         {% endfor %}
                     </ul>
                 </li>
+                {% endif %}
                 {% if budget %}
                 <li class="nav-item">
                     <a href="{% url "budgets:dashboard" budget.id %}" class="nav-link">

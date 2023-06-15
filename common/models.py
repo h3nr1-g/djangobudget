@@ -38,7 +38,7 @@ class TranslationEntry(models.Model):
     )
 
     class Meta:
-        unique_together =('name', 'lang')
+        unique_together = ('name', 'lang')
 
     def __str__(self):
         return f'{self.name} ({self.lang})'
@@ -46,4 +46,7 @@ class TranslationEntry(models.Model):
     @staticmethod
     def get(name, alt_lang=None):
         lang = alt_lang or settings.LANGUAGE_CODE
-        return TranslationEntry.objects.get(name=name, lang=lang).text
+        try:
+            return TranslationEntry.objects.get(name=name, lang=lang).text
+        except TranslationEntry.DoesNotExist:
+            return name

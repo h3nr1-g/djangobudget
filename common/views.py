@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views import View
 
@@ -8,12 +10,12 @@ from budgets.models import Budget
 from common.models import TranslationEntry
 
 
-
 def common_ctx(request, budget=None):
     return {
-        'my_budgets': Budget.my_budgets(request.user),
+        'my_budgets': Budget.objects.filter(Q(read_access__in=[request.user]) | Q(owner=request.user)),
         'budget': budget
     }
+
 
 def formpage_ctx(request, budget, form, form_url):
     return {
@@ -28,16 +30,17 @@ class AuthenticatedUserView(View):
     def dispatch(self, request, *args, **kwargs):
         return super(AuthenticatedUserView, self).dispatch(request, *args, **kwargs)
 
+
 class TranslateItemView(View):
     def get(self, request):
-        query=request.GET.get('query', None)
+        query = request.GET.get('query', None)
         if not query:
-            return HttpResponse('query param missing',status=400)
+            return HttpResponse('query param missing', status=400)
 
         try:
             return HttpResponse(TranslationEntry.objects.get(name=query).text)
         except TranslationEntry.DoesNotExist:
-            return HttpResponse(f'No translation found for "{query}"',status=404)
+            return HttpResponse(f'No translation found for "{query}"', status=404)
 
 
 class TranslationView(View):
@@ -46,3 +49,15 @@ class TranslationView(View):
             te.name: te.text
             for te in TranslationEntry.objects.filter(lang=settings.LANGUAGE_CODE)
         })
+
+
+def error_403(request, exception):
+    return render(request, 'common/errors/403.html')
+
+
+def error_404(request, exception):
+    return render(request, 'common/errors/404.html')
+
+
+def error_500(request):
+    return render(request, 'common/errors/500.html')

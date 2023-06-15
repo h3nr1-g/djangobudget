@@ -9,8 +9,8 @@ services:
         ports:
             - "8000:80"
         env_file: configuration.env
-        environment:
-            - "DJANGOBUDGET_DEBUG=1"
+#        environment:
+#            - "DJANGOBUDGET_DEBUG=1"
         depends_on:
             -   mariadb
 

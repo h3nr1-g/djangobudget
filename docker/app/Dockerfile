@@ -13,7 +13,9 @@ WORKDIR /djangobudget
 RUN pip3 install -r requirements.txt
 RUN pip3 install  mysqlclient gunicorn
 
-RUN python manage.py collectstatic --noinput --no-color --settings djangobudget.settings.prod
+RUN sed -i 's|djangobudget.settings.dev|djangobudget.settings.prod|g' manage.py
+
+RUN python manage.py collectstatic --noinput --no-color
 
 RUN rm -rf /etc/nginx/sites-*
 RUN mv docker/app/nginx.conf /etc/nginx/nginx.conf
