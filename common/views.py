@@ -52,12 +52,18 @@ class TranslationView(View):
 
 
 def error_403(request, exception):
-    return render(request, 'common/errors/403.html')
+    resp = render(request, 'common/errors/403.html')
+    resp.status_code = 403
+    return resp
 
 
 def error_404(request, exception):
-    return render(request, 'common/errors/404.html')
+    resp = render(request, 'common/errors/404.html')
+    resp.status_code = 404
+    return resp
 
 
 def error_500(request):
-    return render(request, 'common/errors/500.html')
+    resp = render(request, 'common/errors/500.html')
+    resp.status_code = 500
+    return resp

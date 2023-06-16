@@ -202,14 +202,18 @@ class AccountsDetailsView(BudgetView):
 
         account = get_object_or_404(Account, id=aid)
         form = build_account_form(request, budget, account)
-        if form.is_valid():
+        valid = form.is_valid()
+        name_valid = len(Account.objects.filter(budget=budget, name=form.cleaned_data['name'])) < 1 if valid else None
+        if valid and name_valid:
             account = form.save(commit=False)
             account.budget = budget
             account.save()
             messages.success(request, TranslationEntry.get('ACCOUNT_UPDATED'))
+        elif valid:
+            form.errors['name'] = [TranslationEntry.get('NAME_ALREADY_IN_USE')]
+            messages.error(request, TranslationEntry.get('ACCOUNT_UPDATE_FAILED'))
         else:
             messages.error(request, TranslationEntry.get('ACCOUNT_UPDATE_FAILED'))
-
         ctx = self.build_ctx(request, budget, account, form)
         return render(request, 'budgets/account.html', ctx)
 

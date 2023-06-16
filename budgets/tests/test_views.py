@@ -1,3 +1,4 @@
+import datetime
 import json
 from datetime import datetime as dt
 
@@ -6,7 +7,7 @@ from django.urls import reverse
 from django.test import TestCase
 from django_webtest import WebTest
 
-from budgets.models import Budget, Account, Expense, Currency
+from budgets.models import Budget, Account, Expense, Currency, Category
 
 
 class BudgetSelectView(TestCase):
@@ -146,7 +147,9 @@ class AccountAddViewTest(WebTest):
     def setUp(self):
         self.budget = Budget.objects.create(name='budget1', currency=Currency.objects.create(name='Dollar', symbol='$'))
         self.test_user = User.objects.create_user(username='user1', password='12345')
+        self.test_user2 = User.objects.create_user(username='user2', password='12345')
         self.budget.owner = self.test_user
+        self.budget.read_access.add(self.test_user2)
         self.budget.save()
         self.url = reverse('budgets:accounts_add', kwargs={'bid': self.budget.id})
 
@@ -183,16 +186,116 @@ class AccountAddViewTest(WebTest):
         self.assertIn('ACCOUNT_CREATION_FAILED', resp.content.decode())
         self.assertEqual(0, len(Account.objects.all()))
 
+    def test_creation_as_ro_user(self):
+        resp = self.app.get(self.url, user=self.test_user2, status='*')
+        self.assertEqual(403, resp.status_code)
+
 
 class AccountsDetailsView(WebTest):
+    def setUp(self):
+        self.budget = Budget.objects.create(name='budget1', currency=Currency.objects.create(name='Dollar', symbol='$'))
+        self.test_user = User.objects.create_user(username='user1', password='12345')
+        self.test_user2 = User.objects.create_user(username='user2', password='12345')
+        self.budget.owner = self.test_user
+        self.budget.read_access.add(self.test_user2)
+        self.budget.write_access.add(self.test_user2)
+        self.budget.save()
+        self.account = Account.objects.create(budget=self.budget, name='account1', start_balance=1000)
+        self.account2 = Account.objects.create(budget=self.budget, name='account2', start_balance=1000)
+        self.url = reverse('budgets:account_details', kwargs={'bid': self.budget.id, 'aid': self.account.id})
+
+    def test_edit_as_owner(self):
+        resp = self.app.get(self.url, user=self.test_user)
+        self.assertEqual(200, resp.status_code)
+        form = resp.form
+        form['name'] = 'DEF567'
+        resp = form.submit()
+        self.assertEqual(200, resp.status_code)
+        self.assertIn('ACCOUNT_UPDATED', resp.content.decode())
+        self.assertEqual(1, len(Account.objects.filter(name='DEF567', budget=self.budget)))
+
+    def test_edit_as_ro_user(self):
+        self.budget.write_access.remove(self.test_user2)
+        self.budget.save()
+        resp = self.app.get(self.url, user=self.test_user2)
+        self.assertEqual(200, resp.status_code)
+        form = resp.form
+        form['name'] = 'DEF567'
+        resp = form.submit(status='*')
+        self.assertEqual(403, resp.status_code)
+
+    def test_name_duplicate(self):
+        resp = self.app.get(self.url, user=self.test_user)
+        self.assertEqual(200, resp.status_code)
+        form = resp.form
+        form['name'] = self.account2.name
+        resp = form.submit()
+        self.assertEqual(200, resp.status_code)
+        self.assertIn('ACCOUNT_UPDATE_FAILED', resp.content.decode())
+
+    def test_delete_as_owner(self):
+        self.assertEqual(1, len(Account.objects.filter(id=self.account.id)))
+        self.client.login(username=self.test_user.username, password='12345')
+        resp = self.client.delete(self.url)
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(0, len(Account.objects.filter(id=self.account.id)))
+
+    def test_delete_as_authorized_user(self):
+        self.assertEqual(1, len(Account.objects.filter(id=self.account.id)))
+        self.client.login(username=self.test_user2.username, password='12345')
+        resp = self.client.delete(self.url)
+        self.assertEqual(200, resp.status_code)
+        self.assertEqual(0, len(Account.objects.filter(id=self.account.id)))
+
+    def test_delete_as_ro_user(self):
+        self.assertEqual(1, len(Account.objects.filter(id=self.account.id)))
+        self.budget.write_access.remove(self.test_user2)
+        self.budget.save()
+        self.client.login(username=self.test_user2.username, password='12345')
+        resp = self.client.delete(self.url)
+        self.assertEqual(403, resp.status_code)
+        self.assertEqual(1, len(Account.objects.filter(id=self.account.id)))
+
+
+class AccountsTableView(TestCase):
     def setUp(self):
         self.budget = Budget.objects.create(name='budget1', currency=Currency.objects.create(name='Dollar', symbol='$'))
         self.test_user = User.objects.create_user(username='user1', password='12345')
         self.budget.owner = self.test_user
         self.budget.save()
         self.account = Account.objects.create(budget=self.budget, name='account1', start_balance=1000)
-        self.url = reverse('budgets:account_details', kwargs={'bid': self.budget.id, 'aid': self.account.id})
+        self.account2 = Account.objects.create(budget=self.budget, name='account2', start_balance=1000)
+        self.url = reverse('budgets:accounts_table', kwargs={'bid': self.budget.id})
 
-    def test_read_as_owner(self):
+    def test_listing(self):
+        self.client.login(username=self.test_user.username, password='12345')
+        resp = self.client.get(self.url)
+        self.assertEqual(200, resp.status_code)
+        for a in Account.objects.filter(budget=self.budget):
+            self.assertIn(a.name, resp.content.decode())
+
+
+class ExpenseAddView(WebTest):
+    def setUp(self):
+        self.budget = Budget.objects.create(name='budget1', currency=Currency.objects.create(name='Dollar', symbol='$'))
+        self.test_user = User.objects.create_user(username='user1', password='12345')
+        self.test_user2 = User.objects.create_user(username='user2', password='12345')
+        self.budget.owner = self.test_user
+        self.budget.read_access.add(self.test_user2)
+        self.budget.write_access.add(self.test_user2)
+        self.budget.save()
+        self.account = Account.objects.create(budget=self.budget, name='account1', start_balance=1000)
+        self.url = reverse('budgets:expenses_add', kwargs={'bid': self.budget.id})
+        self.category = Category.objects.create(name='cat1', budget=self.budget)
+
+    def test_creation_as_owner(self):
         resp = self.app.get(self.url, user=self.test_user)
         self.assertEqual(200, resp.status_code)
+        form = resp.form
+        form['name'] = 'Expense1'
+        form['category'] = self.category.id
+        form['account'] = self.account.id
+        form['amount'] = 500
+        form['created'] = datetime.datetime.now().strftime('%d.%m.%Y')
+        resp = form.submit()
+        print(resp)

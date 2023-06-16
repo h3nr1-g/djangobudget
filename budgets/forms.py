@@ -82,6 +82,7 @@ class ExpenseForm(forms.ModelForm):
     name = forms.CharField(
         label='NAME',
         initial='',
+        required=True,
     )
     category = AutoCompleteSelectField(
         'categories',
