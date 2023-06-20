@@ -209,6 +209,7 @@ class BudgetsTable(tables.Table):
         sequence = (
             'name',
             'note',
+            'currency',
             'actions',
         )
         exclude = [

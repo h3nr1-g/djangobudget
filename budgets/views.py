@@ -155,7 +155,7 @@ class AccountAddView(BudgetView):
     def get(self, request, bid):
         budget = get_object_or_404(Budget, id=bid)
         if not permission_check(budget, request.user, 'write'):
-            raise PermissionDenied(TranslationEntry.get('OPERATION_NOT_ALLOWED', 'de'))
+            raise PermissionDenied()
 
         ctx = self.build_ctx(request, budget)
         return render(request, 'common/formpage.html', ctx)
@@ -163,7 +163,7 @@ class AccountAddView(BudgetView):
     def post(self, request, bid):
         budget = get_object_or_404(Budget, id=bid)
         if not permission_check(budget, request.user, 'write'):
-            raise PermissionDenied(TranslationEntry.get('OPERATION_NOT_ALLOWED', 'de'))
+            raise PermissionDenied()
 
         form = build_account_form(request, budget)
         valid = form.is_valid()
@@ -198,29 +198,30 @@ class AccountsDetailsView(BudgetView):
     def post(self, request, bid, aid):
         budget = get_object_or_404(Budget, id=bid)
         if not permission_check(budget, request.user, 'write'):
-            raise PermissionDenied(TranslationEntry.get('OPERATION_NOT_ALLOWED', 'de'))
-
+            raise PermissionDenied()
         account = get_object_or_404(Account, id=aid)
+
         form = build_account_form(request, budget, account)
-        valid = form.is_valid()
-        name_valid = len(Account.objects.filter(budget=budget, name=form.cleaned_data['name'])) < 1 if valid else None
-        if valid and name_valid:
-            account = form.save(commit=False)
-            account.budget = budget
-            account.save()
-            messages.success(request, TranslationEntry.get('ACCOUNT_UPDATED'))
-        elif valid:
-            form.errors['name'] = [TranslationEntry.get('NAME_ALREADY_IN_USE')]
-            messages.error(request, TranslationEntry.get('ACCOUNT_UPDATE_FAILED'))
+        if form.is_valid():
+            new_name = form.cleaned_data.get('name')
+            if 'name' in form.changed_data and len(Account.objects.filter(budget=budget, name=new_name)) > 0:
+                form.errors['name'] = [TranslationEntry.get('NAME_ALREADY_IN_USE')]
+                messages.error(request, TranslationEntry.get('ACCOUNT_UPDATE_FAILED'))
+            else:
+                account = form.save(commit=False)
+                account.budget = budget
+                account.save()
+                messages.success(request, TranslationEntry.get('ACCOUNT_UPDATED'))
         else:
             messages.error(request, TranslationEntry.get('ACCOUNT_UPDATE_FAILED'))
+
         ctx = self.build_ctx(request, budget, account, form)
         return render(request, 'budgets/account.html', ctx)
 
     def delete(self, request, bid, aid):
         budget = get_object_or_404(Budget, id=bid)
         if not permission_check(budget, request.user, 'write'):
-            raise PermissionDenied(TranslationEntry.get('OPERATION_NOT_ALLOWED', 'de'))
+            raise PermissionDenied()
 
         account = get_object_or_404(Account, id=aid)
         account.delete()
@@ -256,14 +257,14 @@ class ExpenseAddView(BudgetView):
     def get(self, request, bid):
         budget = get_object_or_404(Budget, id=bid)
         if not permission_check(budget, request.user, 'write'):
-            raise PermissionDenied(TranslationEntry.get('OPERATION_NOT_ALLOWED', 'de'))
+            raise PermissionDenied()
         ctx = self.build_ctx(request, budget)
         return render(request, 'common/formpage.html', ctx)
 
     def post(self, request, bid):
         budget = get_object_or_404(Budget, id=bid)
         if not permission_check(budget, request.user, 'write'):
-            raise PermissionDenied(TranslationEntry.get('OPERATION_NOT_ALLOWED', 'de'))
+            raise PermissionDenied()
 
         form = build_expense_form(request, budget)
         if form.is_valid():
@@ -291,7 +292,7 @@ class ExpenseDetailsView(BudgetView):
     def get(self, request, bid, eid):
         budget = get_object_or_404(Budget, id=bid)
         if not permission_check(budget, request.user, 'read'):
-            raise PermissionDenied(TranslationEntry.get('OPERATION_NOT_ALLOWED', 'de'))
+            raise PermissionDenied()
 
         expense = get_object_or_404(Expense, id=eid)
         ctx = self.build_ctx(request, budget, expense)
@@ -300,7 +301,7 @@ class ExpenseDetailsView(BudgetView):
     def post(self, request, bid, eid):
         budget = get_object_or_404(Budget, id=bid)
         if not permission_check(budget, request.user, 'write'):
-            raise PermissionDenied(TranslationEntry.get('OPERATION_NOT_ALLOWED', 'de'))
+            raise PermissionDenied()
 
         expense = get_object_or_404(Expense, id=eid)
         form = build_expense_form(request, budget, expense)
@@ -318,7 +319,7 @@ class ExpenseDetailsView(BudgetView):
     def delete(self, request, bid, eid):
         budget = get_object_or_404(Budget, id=bid)
         if not permission_check(budget, request.user, 'write'):
-            raise PermissionDenied(TranslationEntry.get('OPERATION_NOT_ALLOWED', 'de'))
+            raise PermissionDenied()
 
         expense = get_object_or_404(Expense, id=eid)
         expense.delete()
@@ -353,7 +354,7 @@ class CategoryAddView(BudgetView):
     def get(self, request, bid):
         budget = get_object_or_404(Budget, id=bid)
         if not permission_check(budget, request.user, 'write'):
-            raise PermissionDenied(TranslationEntry.get('OPERATION_NOT_ALLOWED', 'de'))
+            raise PermissionDenied()
 
         ctx = self.build_ctx(request, budget)
         return render(request, 'common/formpage.html', ctx)
@@ -361,7 +362,7 @@ class CategoryAddView(BudgetView):
     def post(self, request, bid):
         budget = get_object_or_404(Budget, id=bid)
         if not permission_check(budget, request.user, 'write'):
-            raise PermissionDenied(TranslationEntry.get('OPERATION_NOT_ALLOWED', 'de'))
+            raise PermissionDenied()
 
         form = build_category_form(request, budget)
         if form.is_valid():
@@ -392,7 +393,7 @@ class CategoryDetailsView(BudgetView):
     def post(self, request, bid, cid):
         budget = get_object_or_404(Budget, id=bid)
         if not permission_check(budget, request.user, 'write'):
-            raise PermissionDenied(TranslationEntry.get('OPERATION_NOT_ALLOWED', 'de'))
+            raise PermissionDenied()
 
         category = get_object_or_404(Category, id=cid)
         form = build_category_form(request, budget, category)
@@ -402,7 +403,7 @@ class CategoryDetailsView(BudgetView):
             category.save()
             messages.success(request, TranslationEntry.get('CATEGORY_UPDATED'))
         else:
-            messages.error(request, TranslationEntry.get('CATEGORY_CREATION_FAILED'))
+            messages.error(request, TranslationEntry.get('CATEGORY_UPDATE_FAILED'))
 
         ctx = self.build_ctx(request, category, category, form)
         return render(request, 'budgets/category.html', ctx)
@@ -410,7 +411,7 @@ class CategoryDetailsView(BudgetView):
     def delete(self, request, bid, cid):
         budget = get_object_or_404(Budget, id=bid)
         if not permission_check(budget, request.user, 'write'):
-            raise PermissionDenied(TranslationEntry.get('OPERATION_NOT_ALLOWED', 'de'))
+            raise PermissionDenied()
 
         category = get_object_or_404(Category, id=cid)
         category.delete()
@@ -448,7 +449,7 @@ class BudgetEditView(BudgetView):
     def get(self, request, bid):
         budget = get_object_or_404(Budget, id=bid)
         if not request.user.is_superuser or request.user != budget.owner:
-            raise PermissionDenied(TranslationEntry.get('OPERATION_NOT_ALLOWED', 'de'))
+            raise PermissionDenied()
 
         ctx = self.build_ctx(request, budget)
         return render(request, 'common/formpage.html', ctx)
@@ -456,7 +457,7 @@ class BudgetEditView(BudgetView):
     def post(self, request, bid):
         budget = get_object_or_404(Budget, id=bid)
         if not request.user.is_superuser or request.user != budget.owner:
-            raise PermissionDenied(TranslationEntry.get('OPERATION_NOT_ALLOWED', 'de'))
+            raise PermissionDenied()
 
         form = build_budget_edit_form(request, budget)
         if form.is_valid():

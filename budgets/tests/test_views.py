@@ -9,10 +9,54 @@ from django_webtest import WebTest
 
 from budgets.models import Budget, Account, Expense, Currency, Category, ExpenseModification
 
+USER_PASSWORD = '12345'
 
-class BudgetSelectView(TestCase):
+
+class InstanceModificationSuite:
+    def get_form_or_die(self, user):
+        resp = self.app.get(self.url, user=user)
+        self.assertEqual(200, resp.status_code)
+        return resp.form
+
+    def run_modification(self, param_dict, user, exp_result_message, exp_status_code):
+        form = self.get_form_or_die(user)
+        for field, value in param_dict.items():
+            form[field] = value
+        resp = form.submit(status='*')
+        self.assertEqual(exp_status_code, resp.status_code)
+        self.assertIn(exp_result_message, resp.content.decode())
+
+    def check_modifications(self, modifications, user, exp_result_message, exp_status_code=200):
+        for param_dict in modifications:
+            self.run_modification(param_dict, user, exp_result_message, exp_status_code)
+
+
+class InstanceDeletionSuite:
+    def check_deletion(self, url, user, exp_status_code=200):
+        self.client.login(username=user.username, password=USER_PASSWORD)
+        resp = self.client.delete(url)
+        self.assertEqual(exp_status_code, resp.status_code)
+
+
+class BudgetSetup:
+    def prepare_budget(self):
+        self.budget = Budget.objects.create(
+            name='budget1',
+            currency=Currency.objects.create(name='Dollar', symbol='$')
+        )
+        self.owner = User.objects.create_user(username='user1', password=USER_PASSWORD)
+        self.ro_user = User.objects.create_user(username='user2', password=USER_PASSWORD)
+        self.rw_user = User.objects.create_user(username='user3', password=USER_PASSWORD)
+        self.budget.owner = self.owner
+        self.budget.read_access.add(self.ro_user)
+        self.budget.read_access.add(self.rw_user)
+        self.budget.write_access.add(self.rw_user)
+        self.budget.save()
+
+
+class BudgetSelectViewTest(TestCase):
     def setUp(self):
-        self.test_user = User.objects.create_user(username='user1', password='12345')
+        self.test_user = User.objects.create_user(username='user1', password=USER_PASSWORD)
         self.budget1 = Budget.objects.create(name='budget1')
         self.budget2 = Budget.objects.create(name='budget2', note='XXXXX')
         self.url = reverse('index')
@@ -23,7 +67,7 @@ class BudgetSelectView(TestCase):
         self.assertIn('/auth/login', resp.headers.get('location'))
 
     def test_access_as_unrelated_user(self):
-        self.client.login(username=self.test_user.username, password='12345')
+        self.client.login(username=self.test_user.username, password=USER_PASSWORD)
         resp = self.client.get(self.url)
         self.assertEqual(200, resp.status_code)
         self.assertNotIn(self.budget1.name, resp.content.decode())
@@ -32,7 +76,7 @@ class BudgetSelectView(TestCase):
     def test_as_budget_owner(self):
         self.budget2.owner = self.test_user
         self.budget2.save()
-        self.client.login(username=self.test_user.username, password='12345')
+        self.client.login(username=self.test_user.username, password=USER_PASSWORD)
         resp = self.client.get(self.url)
         self.assertEqual(200, resp.status_code)
         self.assertNotIn(self.budget1.name, resp.content.decode())
@@ -42,7 +86,7 @@ class BudgetSelectView(TestCase):
     def test_as_ro_user(self):
         self.budget2.read_access.add(self.test_user)
         self.budget2.save()
-        self.client.login(username=self.test_user.username, password='12345')
+        self.client.login(username=self.test_user.username, password=USER_PASSWORD)
         resp = self.client.get(self.url)
         self.assertEqual(200, resp.status_code)
         self.assertNotIn(self.budget1.name, resp.content.decode())
@@ -53,7 +97,7 @@ class BudgetSelectView(TestCase):
 class DashboardViewTest(TestCase):
     def setUp(self):
         self.budget = Budget.objects.create(name='budget1')
-        self.test_user = User.objects.create_user(username='user1', password='12345')
+        self.test_user = User.objects.create_user(username='user1', password=USER_PASSWORD)
         self.url = reverse('budgets:dashboard', kwargs={'bid': self.budget.id})
 
     def test_access_as_anonymous_user(self):
@@ -62,14 +106,14 @@ class DashboardViewTest(TestCase):
         self.assertIn('/auth/login', resp.headers.get('location'))
 
     def test_access_as_unauthorized_user(self):
-        self.client.login(username=self.test_user.username, password='12345')
+        self.client.login(username=self.test_user.username, password=USER_PASSWORD)
         resp = self.client.get(self.url)
         self.assertEqual(403, resp.status_code)
 
     def test_access_as_owner(self):
         self.budget.owner = self.test_user
         self.budget.save()
-        self.client.login(username=self.test_user.username, password='12345')
+        self.client.login(username=self.test_user.username, password=USER_PASSWORD)
         resp = self.client.get(self.url)
         self.assertEqual(200, resp.status_code)
         self.assertIn(self.budget.name, resp.content.decode())
@@ -77,16 +121,16 @@ class DashboardViewTest(TestCase):
     def test_as_ro_user(self):
         self.budget.read_access.add(self.test_user)
         self.budget.save()
-        self.client.login(username=self.test_user.username, password='12345')
+        self.client.login(username=self.test_user.username, password=USER_PASSWORD)
         resp = self.client.get(self.url)
         self.assertEqual(200, resp.status_code)
         self.assertIn(self.budget.name, resp.content.decode())
 
 
-class DashboardDataView(TestCase):
+class DashboardDataViewTest(TestCase):
     def setUp(self):
         self.budget = Budget.objects.create(name='budget1')
-        self.test_user = User.objects.create_user(username='user1', password='12345')
+        self.test_user = User.objects.create_user(username='user1', password=USER_PASSWORD)
         self.url = reverse('budgets:dashboard_data', kwargs={'bid': self.budget.id})
 
     def test_access_as_anonymous_user(self):
@@ -95,21 +139,21 @@ class DashboardDataView(TestCase):
         self.assertIn('/auth/login', resp.headers.get('location'))
 
     def test_access_as_unauthorized_user(self):
-        self.client.login(username=self.test_user.username, password='12345')
+        self.client.login(username=self.test_user.username, password=USER_PASSWORD)
         resp = self.client.get(self.url)
         self.assertEqual(403, resp.status_code)
 
     def test_access_as_owner(self):
         self.budget.owner = self.test_user
         self.budget.save()
-        self.client.login(username=self.test_user.username, password='12345')
+        self.client.login(username=self.test_user.username, password=USER_PASSWORD)
         resp = self.client.get(self.url)
         self.assertEqual(200, resp.status_code)
 
     def test_as_ro_user(self):
         self.budget.read_access.add(self.test_user)
         self.budget.save()
-        self.client.login(username=self.test_user.username, password='12345')
+        self.client.login(username=self.test_user.username, password=USER_PASSWORD)
         resp = self.client.get(self.url)
         self.assertEqual(200, resp.status_code)
         return resp
@@ -146,8 +190,8 @@ class DashboardDataView(TestCase):
 class AccountAddViewTest(WebTest):
     def setUp(self):
         self.budget = Budget.objects.create(name='budget1', currency=Currency.objects.create(name='Dollar', symbol='$'))
-        self.test_user = User.objects.create_user(username='user1', password='12345')
-        self.test_user2 = User.objects.create_user(username='user2', password='12345')
+        self.test_user = User.objects.create_user(username='user1', password=USER_PASSWORD)
+        self.test_user2 = User.objects.create_user(username='user2', password=USER_PASSWORD)
         self.budget.owner = self.test_user
         self.budget.read_access.add(self.test_user2)
         self.budget.save()
@@ -191,173 +235,257 @@ class AccountAddViewTest(WebTest):
         self.assertEqual(403, resp.status_code)
 
 
-class AccountsDetailsView(WebTest):
+class AccountsDetailsViewTest(WebTest, BudgetSetup, InstanceModificationSuite, InstanceDeletionSuite):
     def setUp(self):
-        self.budget = Budget.objects.create(name='budget1', currency=Currency.objects.create(name='Dollar', symbol='$'))
-        self.test_user = User.objects.create_user(username='user1', password='12345')
-        self.test_user2 = User.objects.create_user(username='user2', password='12345')
-        self.budget.owner = self.test_user
-        self.budget.read_access.add(self.test_user2)
-        self.budget.write_access.add(self.test_user2)
-        self.budget.save()
-        self.account = Account.objects.create(budget=self.budget, name='account1', start_balance=1000)
-        self.account2 = Account.objects.create(budget=self.budget, name='account2', start_balance=1000)
-        self.url = reverse('budgets:account_details', kwargs={'bid': self.budget.id, 'aid': self.account.id})
+        self.prepare_budget()
+        self.model_instance = Account.objects.create(budget=self.budget, name='account1', start_balance=1000)
+        self.url = reverse('budgets:account_details', kwargs={'bid': self.budget.id, 'aid': self.model_instance.id})
+        self.valid_modifications = [
+            {'name': 'New Name 123'},
+            {'start_balance': 600}
+        ]
+        self.invalid_modifications = [
+            {'name': ''}
+        ]
+        self.success_message = 'ACCOUNT_UPDATED'
+        self.error_message = 'ACCOUNT_UPDATE_FAILED'
 
-    def test_edit_as_owner(self):
-        resp = self.app.get(self.url, user=self.test_user)
-        self.assertEqual(200, resp.status_code)
-        form = resp.form
-        form['name'] = 'DEF567'
-        resp = form.submit()
-        self.assertEqual(200, resp.status_code)
-        self.assertIn('ACCOUNT_UPDATED', resp.content.decode())
-        self.assertEqual(1, len(Account.objects.filter(name='DEF567', budget=self.budget)))
+    def test_valid_modifications_as_owner(self):
+        self.check_modifications(self.valid_modifications, self.owner, self.success_message)
 
-    def test_edit_as_ro_user(self):
-        self.budget.write_access.remove(self.test_user2)
-        self.budget.save()
-        resp = self.app.get(self.url, user=self.test_user2)
-        self.assertEqual(200, resp.status_code)
-        form = resp.form
-        form['name'] = 'DEF567'
-        resp = form.submit(status='*')
-        self.assertEqual(403, resp.status_code)
+    def test_valid_modifications_as_rw_user(self):
+        self.check_modifications(self.valid_modifications, self.owner, self.success_message)
+
+    def test_valid_modifications_as_ro_user(self):
+        self.check_modifications(self.valid_modifications, self.ro_user, 'PERMISSION_DENIED', 403)
+
+    def test_invalid_modifications_as_owner(self):
+        self.check_modifications(self.invalid_modifications, self.owner, self.error_message)
+
+    def test_invalid_modifications_as_rw_user(self):
+        self.check_modifications(self.invalid_modifications, self.rw_user, self.error_message)
+
+    def test_invalid_modifications_as_ro_user(self):
+        self.check_modifications(self.invalid_modifications, self.ro_user, 'PERMISSION_DENIED', 403)
 
     def test_name_duplicate(self):
-        resp = self.app.get(self.url, user=self.test_user)
-        self.assertEqual(200, resp.status_code)
-        form = resp.form
-        form['name'] = self.account2.name
-        resp = form.submit()
-        self.assertEqual(200, resp.status_code)
-        self.assertIn('ACCOUNT_UPDATE_FAILED', resp.content.decode())
+        Account.objects.create(budget=self.budget, name='account2', start_balance=1000)
+        self.check_modifications([{'name': 'account2'}, ], self.rw_user, 'NAME_ALREADY_IN_USE')
 
     def test_delete_as_owner(self):
-        self.assertEqual(1, len(Account.objects.filter(id=self.account.id)))
-        self.client.login(username=self.test_user.username, password='12345')
-        resp = self.client.delete(self.url)
-        self.assertEqual(200, resp.status_code)
-        self.assertEqual(0, len(Account.objects.filter(id=self.account.id)))
+        self.check_deletion(self.url, self.owner, 200)
+        self.assertEqual(0, len(type(self.model_instance).objects.filter(id=self.model_instance.id)))
 
-    def test_delete_as_authorized_user(self):
-        self.assertEqual(1, len(Account.objects.filter(id=self.account.id)))
-        self.client.login(username=self.test_user2.username, password='12345')
-        resp = self.client.delete(self.url)
-        self.assertEqual(200, resp.status_code)
-        self.assertEqual(0, len(Account.objects.filter(id=self.account.id)))
+    def test_delete_as_rw_user(self):
+        self.check_deletion(self.url, self.rw_user, 200)
+        self.assertEqual(0, len(type(self.model_instance).objects.filter(id=self.model_instance.id)))
 
     def test_delete_as_ro_user(self):
-        self.assertEqual(1, len(Account.objects.filter(id=self.account.id)))
-        self.budget.write_access.remove(self.test_user2)
-        self.budget.save()
-        self.client.login(username=self.test_user2.username, password='12345')
-        resp = self.client.delete(self.url)
-        self.assertEqual(403, resp.status_code)
-        self.assertEqual(1, len(Account.objects.filter(id=self.account.id)))
+        self.check_deletion(self.url, self.ro_user, 403)
 
 
-class AccountsTableView(TestCase):
+class AccountsTableViewTest(TestCase, BudgetSetup):
     def setUp(self):
-        self.budget = Budget.objects.create(name='budget1', currency=Currency.objects.create(name='Dollar', symbol='$'))
-        self.test_user = User.objects.create_user(username='user1', password='12345')
-        self.budget.owner = self.test_user
-        self.budget.save()
-        self.account = Account.objects.create(budget=self.budget, name='account1', start_balance=1000)
-        self.account2 = Account.objects.create(budget=self.budget, name='account2', start_balance=1000)
+        self.prepare_budget()
+        Account.objects.create(budget=self.budget, name='account1', start_balance=1000)
+        Account.objects.create(budget=self.budget, name='account2', start_balance=1000)
         self.url = reverse('budgets:accounts_table', kwargs={'bid': self.budget.id})
+        self.model_class = Account
 
     def test_listing(self):
-        self.client.login(username=self.test_user.username, password='12345')
+        self.client.login(username=self.owner.username, password=USER_PASSWORD)
         resp = self.client.get(self.url)
         self.assertEqual(200, resp.status_code)
-        for a in Account.objects.filter(budget=self.budget):
-            self.assertIn(a.name, resp.content.decode())
+        for inst in self.model_class.objects.filter(budget=self.budget):
+            self.assertIn(str(inst), resp.content.decode())
 
 
-class ExpenseDetailsView(WebTest):
+class ExpenseDetailsView(WebTest, BudgetSetup, InstanceModificationSuite, InstanceDeletionSuite):
     def setUp(self):
-        self.budget = Budget.objects.create(name='budget1', currency=Currency.objects.create(name='Dollar', symbol='$'))
-        self.test_user = User.objects.create_user(username='user1', password='12345')
-        self.test_user2 = User.objects.create_user(username='user2', password='12345')
-        self.budget.owner = self.test_user
-        self.budget.read_access.add(self.test_user2)
-        self.budget.write_access.add(self.test_user2)
-        self.budget.save()
-        self.account = Account.objects.create(budget=self.budget, name='account1', start_balance=1000)
-        self.category = Category.objects.create(name='cat1', budget=self.budget)
+        self.prepare_budget()
         today = datetime.date.today()
-        self.expense = Expense.objects.create(
+        self.model_instance = Expense.objects.create(
             name='Foobar1',
             budget=self.budget,
-            category=self.category,
+            category=Category.objects.create(name='cat1', budget=self.budget),
             created=datetime.date(today.year, today.month, today.day),
             updated=datetime.date(today.year, today.month, today.day),
             amount=120,
-            author=self.test_user,
-            account=self.account
+            author=self.owner,
+            account=Account.objects.create(budget=self.budget, name='account1', start_balance=1000)
         )
-        self.url = reverse('budgets:expense_details', kwargs={'bid': self.budget.id, 'eid': self.expense.id})
+        self.url = reverse('budgets:expense_details', kwargs={'bid': self.budget.id, 'eid': self.model_instance.id})
 
-    def test_mod_as_owner(self):
-        old_id = Expense.objects.get(name='Foobar1').id
-        resp = self.app.get(self.url, user=self.test_user)
-        self.assertEqual(200, resp.status_code)
-        form = resp.form
-        form['name'] = 'ABC123'
-        form['note'] = 'Hello World'
-        resp = form.submit()
-        self.assertEqual(200, resp.status_code)
-        self.assertIn('EXPENSE_UPDATED', resp.content.decode())
-        exp = Expense.objects.get(name='ABC123')
-        self.assertEqual(old_id, exp.id)
-        self.assertEqual('Hello World', exp.note)
+        self.valid_modifications = [
+            {'name': 'New Name 123', 'note': 'ABC123'},
+
+        ]
+        self.invalid_modifications = [
+            {'name': ''}
+        ]
+        self.success_message = 'EXPENSE_UPDATED'
+        self.error_message = 'EXPENSE_UPDATE_FAILED'
+
+    def test_valid_modifications_as_owner(self):
+        self.check_modifications(self.valid_modifications, self.owner, self.success_message)
+
+    def test_valid_modifications_as_rw_user(self):
+        self.check_modifications(self.valid_modifications, self.owner, self.success_message)
+
+    def test_valid_modifications_as_ro_user(self):
+        self.check_modifications(self.valid_modifications, self.ro_user, 'PERMISSION_DENIED', 403)
+
+    def test_invalid_modifications_as_owner(self):
+        self.check_modifications(self.invalid_modifications, self.owner, self.error_message)
+
+    def test_invalid_modifications_as_rw_user(self):
+        self.check_modifications(self.invalid_modifications, self.rw_user, self.error_message)
+
+    def test_invalid_modifications_as_ro_user(self):
+        self.check_modifications(self.invalid_modifications, self.ro_user, 'PERMISSION_DENIED', 403)
+
+    def test_delete_as_owner(self):
+        self.check_deletion(self.url, self.owner, 200)
+        self.assertEqual(0, len(type(self.model_instance).objects.filter(id=self.model_instance.id)))
+
+    def test_delete_as_rw_user(self):
+        self.check_deletion(self.url, self.rw_user, 200)
+        self.assertEqual(0, len(type(self.model_instance).objects.filter(id=self.model_instance.id)))
+
+    def test_delete_as_ro_user(self):
+        self.check_deletion(self.url, self.ro_user, 403)
 
     def test_modification_logging(self):
-        self.assertEqual(0, len(ExpenseModification.objects.filter(expense=self.expense)))
-        self.test_mod_as_owner()
+        self.test_valid_modifications_as_owner()
 
-        em_name = ExpenseModification.objects.get(expense=self.expense, field_name='name')
+        em_name = ExpenseModification.objects.get(field_name='name')
         self.assertEqual('Foobar1', em_name.old_value)
+        self.assertEqual('New Name 123', em_name.new_value)
+
+        em_name = ExpenseModification.objects.get(field_name='note')
+        self.assertEqual('', em_name.old_value)
         self.assertEqual('ABC123', em_name.new_value)
 
-        em_note = ExpenseModification.objects.get(expense=self.expense, field_name='note')
-        self.assertEqual('', em_note.old_value)
-        self.assertEqual('Hello World', em_note.new_value)
 
-
-class ExpensesTableViewTest(TestCase):
+class ExpensesTableViewTest(TestCase, BudgetSetup):
     def setUp(self):
-        self.budget = Budget.objects.create(name='budget1', currency=Currency.objects.create(name='Dollar', symbol='$'))
-        self.test_user = User.objects.create_user(username='user1', password='12345')
-        self.budget.owner = self.test_user
-        self.budget.save()
-        self.account = Account.objects.create(budget=self.budget, name='account1', start_balance=1000)
-        self.category = Category.objects.create(name='cat1', budget=self.budget)
+        self.prepare_budget()
+        account = Account.objects.create(budget=self.budget, name='account1', start_balance=1000)
+        category = Category.objects.create(name='cat1', budget=self.budget)
         today = datetime.date.today()
         Expense.objects.create(
             name='Foobar1',
             budget=self.budget,
-            category=self.category,
-            created=datetime.date(today.year, today.month, today.day),
-            updated=datetime.date(today.year, today.month, today.day),
+            category=category,
+            created=today,
+            updated=today,
             amount=120,
-            author=self.test_user,
-            account=self.account
+            author=self.owner,
+            account=account
         )
         Expense.objects.create(
             name='Foobar2',
             budget=self.budget,
-            category=self.category,
-            created=datetime.date(today.year, today.month, today.day),
-            updated=datetime.date(today.year, today.month, today.day),
+            category=category,
+            created=today,
+            updated=today,
             amount=130,
-            author=self.test_user,
-            account=self.account
+            author=self.owner,
+            account=account
         )
         self.url = reverse('budgets:expenses_table', kwargs={'bid': self.budget.id})
+        self.model_class = Expense
 
-    def test_get_as_owner(self):
-        self.client.login(username=self.test_user.username, password='12345')
+    def test_listing(self):
+        self.client.login(username=self.owner.username, password=USER_PASSWORD)
         resp = self.client.get(self.url)
         self.assertEqual(200, resp.status_code)
+        for inst in self.model_class.objects.filter(budget=self.budget):
+            self.assertIn(str(inst), resp.content.decode())
+
+
+class CategoryAddViewTest(WebTest):
+    def setUp(self):
+        self.budget = Budget.objects.create(name='budget1', currency=Currency.objects.create(name='Dollar', symbol='$'))
+        self.test_user = User.objects.create_user(username='user1', password=USER_PASSWORD)
+        self.budget.owner = self.test_user
+        self.budget.save()
+        self.url = reverse('budgets:categories_add', kwargs={'bid': self.budget.id})
+
+    def test_add_as_owner(self):
+        resp = self.app.get(self.url, user=self.test_user)
+        self.assertEqual(200, resp.status_code)
+        form = resp.form
+        form['name'] = 'Category 1234'
+        resp = form.submit()
+        self.assertEqual(302, resp.status_code)
+        self.assertEqual('/budgets/1/categories/1', resp.headers.get('location'))
+
+    def test_missing_name(self):
+        resp = self.app.get(self.url, user=self.test_user)
+        self.assertEqual(200, resp.status_code)
+        form = resp.form
+        form['name'] = ''
+        resp = form.submit()
+        self.assertEqual(200, resp.status_code)
+        self.assertIn('CATEGORY_CREATION_FAILED', resp.content.decode())
+
+
+class CategoryDetailsViewTest(WebTest, BudgetSetup, InstanceModificationSuite, InstanceDeletionSuite):
+    def setUp(self):
+        self.prepare_budget()
+        self.model_instance = Category.objects.create(name='category1', budget=self.budget)
+        self.url = reverse('budgets:category_details', kwargs={'bid': self.budget.id, 'cid': self.model_instance.id})
+        self.valid_modifications = [
+            {'name': 'New Name 123'},
+        ]
+        self.invalid_modifications = [
+            {'name': ''}
+        ]
+        self.success_message = 'CATEGORY_UPDATED'
+        self.error_message = 'CATEGORY_UPDATE_FAILED'
+
+    def test_valid_modifications_as_owner(self):
+        self.check_modifications(self.valid_modifications, self.owner, self.success_message)
+
+    def test_valid_modifications_as_rw_user(self):
+        self.check_modifications(self.valid_modifications, self.owner, self.success_message)
+
+    def test_valid_modifications_as_ro_user(self):
+        self.check_modifications(self.valid_modifications, self.ro_user, 'PERMISSION_DENIED', 403)
+
+    def test_invalid_modifications_as_owner(self):
+        self.check_modifications(self.invalid_modifications, self.owner, self.error_message)
+
+    def test_invalid_modifications_as_rw_user(self):
+        self.check_modifications(self.invalid_modifications, self.rw_user, self.error_message)
+
+    def test_invalid_modifications_as_ro_user(self):
+        self.check_modifications(self.invalid_modifications, self.ro_user, 'PERMISSION_DENIED', 403)
+
+    def test_delete_as_owner(self):
+        self.check_deletion(self.url, self.owner, 200)
+        self.assertEqual(0, len(type(self.model_instance).objects.filter(id=self.model_instance.id)))
+
+    def test_delete_as_rw_user(self):
+        self.check_deletion(self.url, self.rw_user, 200)
+        self.assertEqual(0, len(type(self.model_instance).objects.filter(id=self.model_instance.id)))
+
+    def test_delete_as_ro_user(self):
+        self.check_deletion(self.url, self.ro_user, 403)
+
+
+class CategoriesTableViewTest(TestCase, BudgetSetup):
+    def setUp(self):
+        self.prepare_budget()
+        Category.objects.create(name='cat1', budget=self.budget)
+        Category.objects.create(name='cat2', budget=self.budget)
+        self.url = reverse('budgets:categories_table', kwargs={'bid': self.budget.id})
+        self.model_class = Category
+
+    def test_listing(self):
+        self.client.login(username=self.owner.username, password=USER_PASSWORD)
+        resp = self.client.get(self.url)
+        self.assertEqual(200, resp.status_code)
+        for inst in self.model_class.objects.filter(budget=self.budget):
+            self.assertIn(str(inst), resp.content.decode())
