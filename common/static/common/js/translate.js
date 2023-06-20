@@ -1,10 +1,14 @@
 
 function translateElements(translation, elements){
     for(let i=0;i < elements.length; i++){
+        let trans = translation[elements[i].innerText];
+        if(trans == undefined)
+            continue;
+
         if(elements[i].childElementCount > 0){
-            elements[i].childNodes[1].innerHTML = translation[elements[i].innerText];
+            elements[i].childNodes[1].innerHTML = trans;
         } else {
-            elements[i].innerHTML = translation[elements[i].innerText];
+            elements[i].innerHTML = trans;
         }
     }
 }

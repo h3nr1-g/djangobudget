@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.test import TestCase
 from django_webtest import WebTest
 
-from budgets.models import Budget, Account, Expense, Currency, Category
+from budgets.models import Budget, Account, Expense, Currency, Category, ExpenseModification
 
 
 class BudgetSelectView(TestCase):
@@ -275,7 +275,7 @@ class AccountsTableView(TestCase):
             self.assertIn(a.name, resp.content.decode())
 
 
-class ExpenseAddView(WebTest):
+class ExpenseDetailsView(WebTest):
     def setUp(self):
         self.budget = Budget.objects.create(name='budget1', currency=Currency.objects.create(name='Dollar', symbol='$'))
         self.test_user = User.objects.create_user(username='user1', password='12345')
@@ -285,17 +285,79 @@ class ExpenseAddView(WebTest):
         self.budget.write_access.add(self.test_user2)
         self.budget.save()
         self.account = Account.objects.create(budget=self.budget, name='account1', start_balance=1000)
-        self.url = reverse('budgets:expenses_add', kwargs={'bid': self.budget.id})
         self.category = Category.objects.create(name='cat1', budget=self.budget)
+        today = datetime.date.today()
+        self.expense = Expense.objects.create(
+            name='Foobar1',
+            budget=self.budget,
+            category=self.category,
+            created=datetime.date(today.year, today.month, today.day),
+            updated=datetime.date(today.year, today.month, today.day),
+            amount=120,
+            author=self.test_user,
+            account=self.account
+        )
+        self.url = reverse('budgets:expense_details', kwargs={'bid': self.budget.id, 'eid': self.expense.id})
 
-    def test_creation_as_owner(self):
+    def test_mod_as_owner(self):
+        old_id = Expense.objects.get(name='Foobar1').id
         resp = self.app.get(self.url, user=self.test_user)
         self.assertEqual(200, resp.status_code)
         form = resp.form
-        form['name'] = 'Expense1'
-        form['category'] = self.category.id
-        form['account'] = self.account.id
-        form['amount'] = 500
-        form['created'] = datetime.datetime.now().strftime('%d.%m.%Y')
+        form['name'] = 'ABC123'
+        form['note'] = 'Hello World'
         resp = form.submit()
-        print(resp)
+        self.assertEqual(200, resp.status_code)
+        self.assertIn('EXPENSE_UPDATED', resp.content.decode())
+        exp = Expense.objects.get(name='ABC123')
+        self.assertEqual(old_id, exp.id)
+        self.assertEqual('Hello World', exp.note)
+
+    def test_modification_logging(self):
+        self.assertEqual(0, len(ExpenseModification.objects.filter(expense=self.expense)))
+        self.test_mod_as_owner()
+
+        em_name = ExpenseModification.objects.get(expense=self.expense, field_name='name')
+        self.assertEqual('Foobar1', em_name.old_value)
+        self.assertEqual('ABC123', em_name.new_value)
+
+        em_note = ExpenseModification.objects.get(expense=self.expense, field_name='note')
+        self.assertEqual('', em_note.old_value)
+        self.assertEqual('Hello World', em_note.new_value)
+
+
+class ExpensesTableViewTest(TestCase):
+    def setUp(self):
+        self.budget = Budget.objects.create(name='budget1', currency=Currency.objects.create(name='Dollar', symbol='$'))
+        self.test_user = User.objects.create_user(username='user1', password='12345')
+        self.budget.owner = self.test_user
+        self.budget.save()
+        self.account = Account.objects.create(budget=self.budget, name='account1', start_balance=1000)
+        self.category = Category.objects.create(name='cat1', budget=self.budget)
+        today = datetime.date.today()
+        Expense.objects.create(
+            name='Foobar1',
+            budget=self.budget,
+            category=self.category,
+            created=datetime.date(today.year, today.month, today.day),
+            updated=datetime.date(today.year, today.month, today.day),
+            amount=120,
+            author=self.test_user,
+            account=self.account
+        )
+        Expense.objects.create(
+            name='Foobar2',
+            budget=self.budget,
+            category=self.category,
+            created=datetime.date(today.year, today.month, today.day),
+            updated=datetime.date(today.year, today.month, today.day),
+            amount=130,
+            author=self.test_user,
+            account=self.account
+        )
+        self.url = reverse('budgets:expenses_table', kwargs={'bid': self.budget.id})
+
+    def test_get_as_owner(self):
+        self.client.login(username=self.test_user.username, password='12345')
+        resp = self.client.get(self.url)
+        self.assertEqual(200, resp.status_code)

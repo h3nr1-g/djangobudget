@@ -12,7 +12,7 @@ from users.forms import PasswordChangeForm, UserDetailsForm
 class PasswordChangeView(AuthenticatedUserView):
     def get(self, request):
         form = PasswordChangeForm()
-        ctx = formpage_ctx(request, None, form, reverse('users:pwchange', args=(request.user.id,)))
+        ctx = formpage_ctx(request, None, form, reverse('users:pwchange'))
         return render(request, 'common/formpage.html', ctx)
 
     def post(self, request):

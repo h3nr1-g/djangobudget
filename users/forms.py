@@ -15,13 +15,16 @@ class UserLoginForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super(UserLoginForm, self).__init__(*args, **kwargs)
 
-    username = forms.CharField(widget=forms.TextInput(
-        attrs={
-            'class': 'form-control',
-            'placeholder': 'User name',
-            'autofocus': True,
-        }
-    ))
+    username = forms.CharField(
+        label='USERNAME',
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'User name',
+                'autofocus': True,
+            }
+        )
+    )
     password = forms.CharField(widget=forms.PasswordInput(
         attrs={
             'class': 'form-control',
@@ -31,18 +34,24 @@ class UserLoginForm(AuthenticationForm):
 
 
 class PasswordChangeForm(forms.Form):
-    new = forms.CharField(widget=forms.PasswordInput(
-        attrs={
-            'class': 'form-control',
-            'placeholder': 'New Password',
-        }
-    ))
-    confirmed = forms.CharField(widget=forms.PasswordInput(
-        attrs={
-            'class': 'form-control',
-            'placeholder': 'Confirm New Password',
-        }
-    ))
+    new = forms.CharField(
+        label='NEW_PASSWORD',
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'New Password',
+            }
+        )
+    )
+    confirmed = forms.CharField(
+        label='CONFIRM_PASSWORD',
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Confirm New Password',
+            }
+        )
+    )
 
     def clean(self):
         cleaned_data = super().clean()

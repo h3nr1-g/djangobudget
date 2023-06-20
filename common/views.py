@@ -12,7 +12,7 @@ from common.models import TranslationEntry
 
 def common_ctx(request, budget=None):
     return {
-        'my_budgets': Budget.objects.filter(Q(read_access__in=[request.user]) | Q(owner=request.user)),
+        'my_budgets': set(Budget.objects.filter(Q(read_access__in=[request.user]) | Q(owner=request.user))),
         'budget': budget
     }
 

@@ -17,7 +17,7 @@ def log_modification(instance, **kwargs):
             ExpenseModification.objects.create(
                 expense=instance,
                 field_name=field,
-                old_value=str(old_val),
-                new_value=str(new_val),
+                old_value=str(old_val) if old_val is not None else '',
+                new_value=str(new_val) if new_val is not None else '',
                 updated_by=instance.updated_by,
             )
