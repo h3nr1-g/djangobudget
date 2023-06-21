@@ -12,30 +12,32 @@ from budgets.models import Budget, Account, Expense, Currency, Category, Expense
 USER_PASSWORD = '12345'
 
 
-class InstanceModificationSuite:
-    def get_form_or_die(self, user):
-        resp = self.app.get(self.url, user=user)
+class InstanceCrudSuite:
+    def _get_form_or_die(self, user):
+        resp = self.app.get(self.url, user=user, status='*')
         self.assertEqual(200, resp.status_code)
         return resp.form
 
-    def run_modification(self, param_dict, user, exp_result_message, exp_status_code):
-        form = self.get_form_or_die(user)
+    def _run_modification(self, param_dict, user, exp_result_message, exp_status_code):
+        form = self._get_form_or_die(user)
         for field, value in param_dict.items():
             form[field] = value
         resp = form.submit(status='*')
         self.assertEqual(exp_status_code, resp.status_code)
-        self.assertIn(exp_result_message, resp.content.decode())
+        if exp_result_message:
+            self.assertIn(exp_result_message, resp.content.decode())
 
     def check_modifications(self, modifications, user, exp_result_message, exp_status_code=200):
         for param_dict in modifications:
-            self.run_modification(param_dict, user, exp_result_message, exp_status_code)
+            self._run_modification(param_dict, user, exp_result_message, exp_status_code)
 
-
-class InstanceDeletionSuite:
     def check_deletion(self, url, user, exp_status_code=200):
         self.client.login(username=user.username, password=USER_PASSWORD)
         resp = self.client.delete(url)
         self.assertEqual(exp_status_code, resp.status_code)
+
+    def check_creation(self, creation_params, user, exp_result_message, exp_status_code=302):
+        self.check_modifications(creation_params, user, exp_result_message, exp_status_code)
 
 
 class BudgetSetup:
@@ -187,55 +189,37 @@ class DashboardDataViewTest(TestCase):
         self.assertIn('series', charts['history'])
 
 
-class AccountAddViewTest(WebTest):
+class AccountAddViewTest(WebTest, BudgetSetup, InstanceCrudSuite):
     def setUp(self):
-        self.budget = Budget.objects.create(name='budget1', currency=Currency.objects.create(name='Dollar', symbol='$'))
-        self.test_user = User.objects.create_user(username='user1', password=USER_PASSWORD)
-        self.test_user2 = User.objects.create_user(username='user2', password=USER_PASSWORD)
-        self.budget.owner = self.test_user
-        self.budget.read_access.add(self.test_user2)
-        self.budget.save()
+        self.prepare_budget()
         self.url = reverse('budgets:accounts_add', kwargs={'bid': self.budget.id})
+        self.valid_parameters = [
+            {'name': 'Account123', 'start_balance': '600'},
+        ]
+        self.invalid_parameters = [
+        ]
+        self.success_message = 'ACCOUNT_CREATED'
+        self.error_message = 'ACCOUNT_CREATION_FAILED'
 
-    def test_successful_add(self):
-        resp = self.app.get(self.url, user=self.test_user)
-        self.assertEqual(200, resp.status_code)
-        form = resp.form
-        form['name'] = 'Account1'
-        form['start_balance'] = 5000
-        resp = form.submit()
-        self.assertEqual(302, resp.status_code)
-        self.assertEqual('/budgets/1/accounts/1', resp.headers['Location'])
-        acc = Account.objects.filter(name='Account1', start_balance=5000, budget=self.budget)
-        self.assertEqual(1, len(acc))
+    def test_valid_creations_as_owner(self):
+        self.check_creation(self.valid_parameters, self.owner, None)
 
-    def test_dup_same_budget(self):
-        a_org = Account.objects.create(name='Account1', budget=self.budget)
-        resp = self.app.get(self.url, user=self.test_user)
-        self.assertEqual(200, resp.status_code)
-        form = resp.form
-        form['name'] = a_org.name
-        form['start_balance'] = 5000
-        resp = form.submit()
-        self.assertEqual(200, resp.status_code)
-        self.assertIn('NAME_ALREADY_IN_USE', resp.content.decode())
-        self.assertEqual(1, len(Account.objects.filter(name=a_org.name, budget=a_org.budget)))
+    def test_valid_creations_as_rw_user(self):
+        self.check_creation(self.valid_parameters, self.owner, None)
 
-    def test_invalid_data(self):
-        resp = self.app.get(self.url, user=self.test_user)
-        self.assertEqual(200, resp.status_code)
-        form = resp.form
-        resp = form.submit()
-        self.assertEqual(200, resp.status_code)
-        self.assertIn('ACCOUNT_CREATION_FAILED', resp.content.decode())
-        self.assertEqual(0, len(Account.objects.all()))
+    def test_invalid_creations_as_owner(self):
+        self.check_creation(self.invalid_parameters, self.owner, self.error_message)
+
+    def test_invalid_creations_as_rw_user(self):
+        self.check_creation(self.invalid_parameters, self.rw_user, self.error_message)
 
     def test_creation_as_ro_user(self):
-        resp = self.app.get(self.url, user=self.test_user2, status='*')
+        self.client.login(username=self.ro_user.username, password=USER_PASSWORD)
+        resp = self.client.get(self.url)
         self.assertEqual(403, resp.status_code)
 
 
-class AccountsDetailsViewTest(WebTest, BudgetSetup, InstanceModificationSuite, InstanceDeletionSuite):
+class AccountsDetailsViewTest(WebTest, BudgetSetup, InstanceCrudSuite):
     def setUp(self):
         self.prepare_budget()
         self.model_instance = Account.objects.create(budget=self.budget, name='account1', start_balance=1000)
@@ -300,7 +284,7 @@ class AccountsTableViewTest(TestCase, BudgetSetup):
             self.assertIn(str(inst), resp.content.decode())
 
 
-class ExpenseDetailsView(WebTest, BudgetSetup, InstanceModificationSuite, InstanceDeletionSuite):
+class ExpenseDetailsView(WebTest, BudgetSetup, InstanceCrudSuite):
     def setUp(self):
         self.prepare_budget()
         today = datetime.date.today()
@@ -404,34 +388,37 @@ class ExpensesTableViewTest(TestCase, BudgetSetup):
             self.assertIn(str(inst), resp.content.decode())
 
 
-class CategoryAddViewTest(WebTest):
+class CategoryAddViewTest(WebTest, BudgetSetup, InstanceCrudSuite):
     def setUp(self):
-        self.budget = Budget.objects.create(name='budget1', currency=Currency.objects.create(name='Dollar', symbol='$'))
-        self.test_user = User.objects.create_user(username='user1', password=USER_PASSWORD)
-        self.budget.owner = self.test_user
-        self.budget.save()
+        self.prepare_budget()
         self.url = reverse('budgets:categories_add', kwargs={'bid': self.budget.id})
+        self.valid_parameters = [
+            {'name': 'Category123'},
+        ]
+        self.invalid_parameters = [
+        ]
+        self.success_message = 'ACCOUNT_CREATED'
+        self.error_message = 'ACCOUNT_CREATION_FAILED'
 
-    def test_add_as_owner(self):
-        resp = self.app.get(self.url, user=self.test_user)
-        self.assertEqual(200, resp.status_code)
-        form = resp.form
-        form['name'] = 'Category 1234'
-        resp = form.submit()
-        self.assertEqual(302, resp.status_code)
-        self.assertEqual('/budgets/1/categories/1', resp.headers.get('location'))
+    def test_valid_creations_as_owner(self):
+        self.check_creation(self.valid_parameters, self.owner, None)
 
-    def test_missing_name(self):
-        resp = self.app.get(self.url, user=self.test_user)
-        self.assertEqual(200, resp.status_code)
-        form = resp.form
-        form['name'] = ''
-        resp = form.submit()
-        self.assertEqual(200, resp.status_code)
-        self.assertIn('CATEGORY_CREATION_FAILED', resp.content.decode())
+    def test_valid_creations_as_rw_user(self):
+        self.check_creation(self.valid_parameters, self.owner, None)
+
+    def test_invalid_creations_as_owner(self):
+        self.check_creation(self.invalid_parameters, self.owner, self.error_message)
+
+    def test_invalid_creations_as_rw_user(self):
+        self.check_creation(self.invalid_parameters, self.rw_user, self.error_message)
+
+    def test_creation_as_ro_user(self):
+        self.client.login(username=self.ro_user.username, password=USER_PASSWORD)
+        resp = self.client.get(self.url)
+        self.assertEqual(403, resp.status_code)
 
 
-class CategoryDetailsViewTest(WebTest, BudgetSetup, InstanceModificationSuite, InstanceDeletionSuite):
+class CategoryDetailsViewTest(WebTest, BudgetSetup, InstanceCrudSuite):
     def setUp(self):
         self.prepare_budget()
         self.model_instance = Category.objects.create(name='category1', budget=self.budget)
