@@ -197,6 +197,7 @@ class AccountAddViewTest(WebTest, BudgetSetup, InstanceCrudSuite):
             {'name': 'Account123', 'start_balance': '600'},
         ]
         self.invalid_parameters = [
+            {'name': '', 'start_balance': '600'},
         ]
         self.success_message = 'ACCOUNT_CREATED'
         self.error_message = 'ACCOUNT_CREATION_FAILED'
@@ -208,10 +209,10 @@ class AccountAddViewTest(WebTest, BudgetSetup, InstanceCrudSuite):
         self.check_creation(self.valid_parameters, self.owner, None)
 
     def test_invalid_creations_as_owner(self):
-        self.check_creation(self.invalid_parameters, self.owner, self.error_message)
+        self.check_creation(self.invalid_parameters, self.owner, self.error_message, 200)
 
     def test_invalid_creations_as_rw_user(self):
-        self.check_creation(self.invalid_parameters, self.rw_user, self.error_message)
+        self.check_creation(self.invalid_parameters, self.rw_user, self.error_message, 200)
 
     def test_creation_as_ro_user(self):
         self.client.login(username=self.ro_user.username, password=USER_PASSWORD)
@@ -396,9 +397,10 @@ class CategoryAddViewTest(WebTest, BudgetSetup, InstanceCrudSuite):
             {'name': 'Category123'},
         ]
         self.invalid_parameters = [
+            {'name': ''},
         ]
-        self.success_message = 'ACCOUNT_CREATED'
-        self.error_message = 'ACCOUNT_CREATION_FAILED'
+        self.success_message = 'CATEGORY_CREATED'
+        self.error_message = 'CATEGORY_CREATION_FAILED'
 
     def test_valid_creations_as_owner(self):
         self.check_creation(self.valid_parameters, self.owner, None)
@@ -407,10 +409,10 @@ class CategoryAddViewTest(WebTest, BudgetSetup, InstanceCrudSuite):
         self.check_creation(self.valid_parameters, self.owner, None)
 
     def test_invalid_creations_as_owner(self):
-        self.check_creation(self.invalid_parameters, self.owner, self.error_message)
+        self.check_creation(self.invalid_parameters, self.owner, self.error_message, 200)
 
     def test_invalid_creations_as_rw_user(self):
-        self.check_creation(self.invalid_parameters, self.rw_user, self.error_message)
+        self.check_creation(self.invalid_parameters, self.rw_user, self.error_message, 200)
 
     def test_creation_as_ro_user(self):
         self.client.login(username=self.ro_user.username, password=USER_PASSWORD)
@@ -476,3 +478,34 @@ class CategoriesTableViewTest(TestCase, BudgetSetup):
         self.assertEqual(200, resp.status_code)
         for inst in self.model_class.objects.filter(budget=self.budget):
             self.assertIn(str(inst), resp.content.decode())
+
+
+class BudgetEditView(WebTest, BudgetSetup, InstanceCrudSuite):
+    def setUp(self):
+        self.prepare_budget()
+        self.model_instance = Budget.objects.first()
+        self.url = reverse('budgets:edit', kwargs={'bid': self.budget.id})
+        self.valid_modifications = [
+            {'name': 'New Name 123'},
+        ]
+        self.invalid_modifications = [
+            {'name': ''}
+        ]
+        self.success_message = 'BUDGET_UPDATED'
+        self.error_message = 'BUDGET_UPDATE_FAILED'
+
+    def test_valid_modifications_as_owner(self):
+        self.check_modifications(self.valid_modifications, self.owner, self.success_message)
+
+    def test_access_as_rw_user(self):
+        self.client.login(username=self.rw_user.username, password=USER_PASSWORD)
+        resp = self.client.get(self.url)
+        self.assertEqual(403, resp.status_code)
+
+    def test_access_as_ro_user(self):
+        self.client.login(username=self.ro_user.username, password=USER_PASSWORD)
+        resp = self.client.get(self.url)
+        self.assertEqual(403, resp.status_code)
+
+    def test_invalid_modifications_as_owner(self):
+        self.check_modifications(self.invalid_modifications, self.owner, self.error_message)

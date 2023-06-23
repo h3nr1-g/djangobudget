@@ -448,7 +448,7 @@ class CategoriesTableView(BudgetView):
 class BudgetEditView(BudgetView):
     def get(self, request, bid):
         budget = get_object_or_404(Budget, id=bid)
-        if not request.user.is_superuser or request.user != budget.owner:
+        if not request.user.is_superuser and request.user != budget.owner:
             raise PermissionDenied()
 
         ctx = self.build_ctx(request, budget)
@@ -456,18 +456,17 @@ class BudgetEditView(BudgetView):
 
     def post(self, request, bid):
         budget = get_object_or_404(Budget, id=bid)
-        if not request.user.is_superuser or request.user != budget.owner:
+        if not request.user.is_superuser and request.user != budget.owner:
             raise PermissionDenied()
 
         form = build_budget_edit_form(request, budget)
         if form.is_valid():
             form.save()
             messages.success(request, TranslationEntry.get('BUDGET_UPDATED'))
-            return redirect(reverse('budgets:edit', args=(budget.id,)))
         else:
             messages.error(request, TranslationEntry.get('BUDGET_UPDATE_FAILED'))
-            ctx = self.build_ctx(request, budget, form)
-            return render(request, 'common/formpage.html', ctx)
+        ctx = self.build_ctx(request, budget, form)
+        return render(request, 'common/formpage.html', ctx)
 
     def build_ctx(self, request, budget, form=None):
         used_form = form or build_budget_edit_form(request, budget)
