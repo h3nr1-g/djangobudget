@@ -10,7 +10,7 @@ def log_modification(instance, **kwargs):
         return
 
     old = Expense.objects.get(id=instance.id)
-    for field in ['category', 'amount', 'name', 'note']:
+    for field in ['category', 'amount', 'name', 'note', 'created']:
         old_val = getattr(old, field)
         new_val = getattr(instance, field)
         if old_val != new_val:

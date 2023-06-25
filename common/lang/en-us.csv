@@ -1,0 +1,88 @@
+name;lang;text
+ACCESS_DENIED;en-us;Access Denied
+ACCOUNT;en-us;Account
+ACCOUNTS;en-us;Accounts
+ACCOUNTS_NUMBER;en-us;Number of accounts
+ACCOUNT_CREATED;en-us;Account created successfully.
+ACCOUNT_CREATION_FAILED;en-us;Account creation failed. Please check your inputs.
+ACCOUNT_DELETED;en-us;Account successfully removed.
+ACCOUNT_LOCKED;en-us;Account is locked.
+ACCOUNT_UPDATED;en-us;Account updated successfully.
+ACCOUNT_UPDATE_FAILED;en-us;Account update failed. Please check your inputs.
+ALL;en-us;All
+AMOUNT;en-us;Amount
+AUTHOR;en-us;Author
+BALANCE;en-us;Balance
+BUDGETS;en-us;Budgets
+BUDGET_SETTINGS;en-us;Budget settings
+BUDGET_UPDATED;en-us;Budget updated successfully.
+BUDGET_UPDATE_FAILED;en-us;Budget update failed. Please check your inputs.
+CATEGORIES;en-us;Categories
+CATEGORY;en-us;Category
+CATEGORY_CREATED;en-us;Category created successfully.
+CATEGORY_CREATION_FAILED;en-us;Category creation failed. Please check your inputs.
+CATEGORY_DELETED;en-us;Category successfully removed.
+CATEGORY_UPDATED;en-us;Category updated successfully.
+CATEGORY_UPDATE_FAILED;en-us;Category update failed. Please check your inputs.
+CATEGORY_DELETED;en-us;Category successfully removed.
+CHANGE_PASSWORT;en-us;Change password
+CONFIRM_DELETION;en-us;Confirm deletion
+CONFIRM_PASSWORD;en-us;Confirm password
+CREATE_ACCOUNT;en-us; Create account
+CREATE_CATEGORY;en-us;Create category
+CREATE_EXPENSE;en-us;Create expense
+CREATION_DATE;en-us;Creation date
+CURRENCY;en-us;Currency
+CURRENT_BALANCE;en-us;Current balance
+DASHBOARD;en-us;Dashboard
+DELETE;en-us;Delete
+DELETE_OBJECT;en-us; Delete object
+DETAILS;en-us;Details
+EXPENSES;en-us;Expenses
+EXPENSE_CREATED;en-us;Expense created successfully.
+EXPENSE_CREATION_FAILED;en-us;Expense creation failed. Please check your inputs.
+EXPENSE_DELETED;en-us;Expense successfully removed.
+EXPENSE_UPDATED;en-us;Expense updated successfully.
+EXPENSE_UPDATE_FAILED;en-us;Expense update failed. Please check your inputs.
+EXTERNAL_REFERENCE;en-us;External reference
+FIELD_NAME;en-us;Field name
+HISTORY;en-us;History
+INTERNAL_ERROR_OCCURRED;en-us;Internal error occurred
+LOADING;en-us;Loading
+LOCKED;en-us;Locked
+LOGIN;en-us;Login
+LOGIN_FAILED;en-us;Login failed
+LOGOUT;en-us;Logout
+MY_ACCOUNT;en-us;My account
+NAME;en-us;Name
+NAME_ALREADY_IN_USE;en-us;Name is already in use.
+NEW;en-us;New
+NEW_PASSWORD;en-us;New Password
+NEW_VALUE;en-us;New value
+NO;en-us;No
+NOTE;en-us;Note
+NOT_ENOUGH_MONEY;en-us;Balance not sufficient
+NUM_EXPENSES;en-us;Number of expenses
+OBJECT_NOT_FOUND;en-us;Object not found
+OLD_VALUE;en-us;Old value
+OPERATION_NOT_ALLOWED;en-us;Operation not allowed
+OWNER;en-us;Owner
+PAGE_NOT_FOUND;en-us;Page not found
+PARENT_CATEGORY;en-us;Parent category
+PASSWORDS_NOT_IDENTICAL;en-us;Old and new password are not the same.
+PASSWORD_UPDATED;en-us;Password updated successfully.
+PERMISSION_DENIED;en-us;Permission denied
+REMAINING_BUDGET;en-us;Remaining budget
+REPORT;en-us;Report
+SAVE;en-us;Save
+SERVER_ERROR;en-us;Server Error
+START_BALANCE;en-us;Start Balance
+TIMESTAMP;en-us;Timestamp
+TOTAL_BUDGET;en-us;Total budget
+TOTAL_EXPENSES;en-us; Total expenses
+TOTAL_EXPENSES_MONTH;en-us;Total expenses this month
+TOTAL_EXPENSES_YEAR;en-us;Total expenses this year
+TOTAL_VALUE;en-us;Total value
+UPDATED_BY;en-us;Updated by
+USERNAME;en-us;Username
+YES;en-us;Yes

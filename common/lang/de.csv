@@ -23,6 +23,7 @@ CATEGORY_CREATED;de;Kategorie erfolgreich angelegt.
 CATEGORY_CREATION_FAILED;de;Anlegen der Kategorie fehlgeschlagen. Bitte überpüfen Sie Ihre Eingaben
 CATEGORY_UPDATED;de;Kategorie erfolgreich aktualisiert.
 CATEGORY_UPDATE_FAILED;de;Aktualisieren der Kategorie fehlgeschlagen. Bitte überpüfen Sie Ihre Eingaben
+CATEGORY_DELETED;eng;Kategorie erfolgreich entfernt.
 CHANGE_PASSWORT;de;Passwort ändern
 CONFIRM_DELETION;de;Soll das Objekt wirklich gelöscht werden?
 CREATE_ACCOUNT;de;Konto anlegen

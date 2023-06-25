@@ -143,11 +143,13 @@ class DashboardDataView(BudgetView):
                 entry[f'acc_{a.id}'] = a.balance_at(e.created)
             series.append(entry)
 
+        lang = settings.LANGUAGE_CODE
+        lang = lang.split('-')[0] if '-' in lang else lang
         return {
             'series': series,
             'ykeys': ['expense'] + [f'acc_{a.id}' for a in accounts],
             'labels': [TranslationEntry.get('EXPENSES'), ] + account_names,
-            'lang': settings.LANGUAGE_CODE
+            'lang': lang
         }
 
 

@@ -5,18 +5,18 @@ DEBUG = True
 
 INSTALLED_APPS += [
     'debug_toolbar',
-#    'django_nose',
+    'django_nose',
 ]
-
 # Use nose to run all tests
-#TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # Tell nose to measure coverage on the 'foo' and 'bar' apps
-#NOSE_ARGS = [
-#    '--with-coverage',
-#    '--cover-package=budgets,common,users',
-#    '--cover-html',
-#]
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-package=budgets,common,users',
+    '--cover-html',
+    '--cover-html-dir=coverage'
+]
 
 MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware"] + MIDDLEWARE
 

@@ -102,7 +102,7 @@ LOGIN_URL = '/auth/login'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
-LANGUAGE_CODE = os.environ.get('DJANGOBUDGET_LANG','de')
+LANGUAGE_CODE = os.environ.get('DJANGOBUDGET_LANG','en-us')
 TIME_ZONE = os.environ.get('DJANGOBUDGET_TIMEZONE','Europe/Berlin')
 USE_I18N = True
 #USE_TZ = True
