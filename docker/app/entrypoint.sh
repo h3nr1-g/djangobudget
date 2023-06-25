@@ -1,10 +1,10 @@
 #!/bin/bash
-export DJANGO_SETTINGS_MODULE=djangobudget.settings.prod
 export PYTHONUNBUFFERED=1
 
 # run custom command if provided
 if [ $# -gt 0 ]; then
   eval "$@"
+  exit $?
 fi
 
 # wait for DB server to come up

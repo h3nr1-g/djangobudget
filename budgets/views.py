@@ -137,9 +137,8 @@ class DashboardDataView(BudgetView):
         accounts = Account.objects.filter(budget=budget, locked=False).order_by('id')
         account_names = [a.name for a in accounts]
         expenses = Expense.objects.filter(account__in=accounts)
-        date_fmt = settings.DATE_FORMAT
         for e in expenses.order_by('created'):
-            entry = {'x': e.created.strftime(date_fmt), 'expense': e.amount}
+            entry = {'x': e.created.strftime('%Y/%m/%d'), 'expense': e.amount}
             for a in accounts:
                 entry[f'acc_{a.id}'] = a.balance_at(e.created)
             series.append(entry)
@@ -147,7 +146,8 @@ class DashboardDataView(BudgetView):
         return {
             'series': series,
             'ykeys': ['expense'] + [f'acc_{a.id}' for a in accounts],
-            'labels': [TranslationEntry.get('EXPENSES'), ] + account_names
+            'labels': [TranslationEntry.get('EXPENSES'), ] + account_names,
+            'lang': settings.LANGUAGE_CODE
         }
 
 

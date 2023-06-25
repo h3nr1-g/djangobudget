@@ -2,6 +2,14 @@
 {% load static %}
 {% load bootstrap4 %}
 
+{% block js_css %}
+<script src="{% static "budgets/js/expense.js" %}"></script>
+<link rel="stylesheet" href="{% static "budgets/css/expense.css" %}">
+<script>
+    addBtnInterval = setInterval(addCategoryDeleteButton, 100);
+</script>
+{% endblock %}
+
 {% block content %}
 {%include "common/modal.html" %}
 <div class="row">
@@ -44,6 +52,4 @@
         </div>
     </div>
 </div>
-
-
 {% endblock %}

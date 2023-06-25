@@ -10,20 +10,18 @@ function loadData(request) {
         document.getElementById("statRemaining").classList.add('bg-danger');
     }
 
-    createHistoryChart(data.charts.history);
+    createHistoryChart(data.charts.history, data.lang);
 }
 
-function createHistoryChart(data) {
+function createHistoryChart(data, lang) {
 
     Morris.Area({
       element: 'chart',
       data: data.series,
       xkey: 'x',
-//      parseTime: false,
-//      xLabelFormat: function(obj){
-//        var index = obj.x < 12 ? obj.x : (obj.x -12);
-//        return xlabel[index];
-//      },
+      xLabelFormat: function (x) {
+        return x.toLocaleDateString(lang, {year:"numeric", month:"numeric", day:"numeric"});
+      },
       ykeys: data.ykeys,
       labels: data.labels,
     });
