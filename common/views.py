@@ -11,8 +11,13 @@ from common.models import TranslationEntry
 
 
 def common_ctx(request, budget=None):
+    if request.user.is_superuser:
+        budgets = Budget.objects.all()
+    else:
+        budgets = set(Budget.objects.filter(Q(read_access__in=[request.user]) | Q(owner=request.user)))
+
     return {
-        'my_budgets': set(Budget.objects.filter(Q(read_access__in=[request.user]) | Q(owner=request.user))),
+        'my_budgets': budgets,
         'budget': budget
     }
 
