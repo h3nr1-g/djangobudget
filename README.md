@@ -71,5 +71,10 @@ python3 manage.py runserver
 ### Note
 For docker deployments a rebuild of the application image is necessary. All CSV files in common/res/lang will be loaded automatically.
 
-# Licence
-Software licenced under [GPLv2](gnu-gpl-v2.0.md)
+
+## License
+Copyright © Henry Glueck. Distributed under the GNU Lesser General Public License v2.1. See the file [LICENSE](/LICENSE).
+
+This project includes code from Django framework. Django is released under modified BSD license.
+
+Fixtures with book details used for testing purposes and by demo site are based on data dumps from [Open Library](https://openlibrary.org/).
