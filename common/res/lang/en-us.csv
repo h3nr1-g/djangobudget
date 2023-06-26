@@ -24,7 +24,6 @@ CATEGORY_CREATION_FAILED;en-us;Category creation failed. Please check your input
 CATEGORY_DELETED;en-us;Category successfully removed.
 CATEGORY_UPDATED;en-us;Category updated successfully.
 CATEGORY_UPDATE_FAILED;en-us;Category update failed. Please check your inputs.
-CATEGORY_DELETED;en-us;Category successfully removed.
 CHANGE_PASSWORT;en-us;Change password
 CONFIRM_DELETION;en-us;Confirm deletion
 CONFIRM_PASSWORD;en-us;Confirm password
@@ -50,6 +49,7 @@ HISTORY;en-us;History
 INTERNAL_ERROR_OCCURRED;en-us;Internal error occurred
 LOADING;en-us;Loading
 LOCKED;en-us;Locked
+LOGGED_OUT;en-us;You have been logged out.
 LOGIN;en-us;Login
 LOGIN_FAILED;en-us;Login failed
 LOGOUT;en-us;Logout

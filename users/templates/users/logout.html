@@ -1,0 +1,20 @@
+{% extends 'common/blank.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row">
+  <div class="col-12">
+      <div class="text-center alert alert-success translate">LOGGED_OUT</div>
+  </div>
+</div>
+
+<script>
+  setTimeout(
+    function(){
+      document.location.href = "{% url "login" %}";
+    },
+    5000
+  );
+</script>
+<!-- /.login-box -->
+{% endblock %}

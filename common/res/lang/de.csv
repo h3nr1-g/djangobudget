@@ -21,11 +21,12 @@ CATEGORIES;de;Kategorien
 CATEGORY;de;Kategorie
 CATEGORY_CREATED;de;Kategorie erfolgreich angelegt.
 CATEGORY_CREATION_FAILED;de;Anlegen der Kategorie fehlgeschlagen. Bitte überpüfen Sie Ihre Eingaben
+CATEGORY_DELETED;de;Kategorie erfolgreich entfernt.
 CATEGORY_UPDATED;de;Kategorie erfolgreich aktualisiert.
 CATEGORY_UPDATE_FAILED;de;Aktualisieren der Kategorie fehlgeschlagen. Bitte überpüfen Sie Ihre Eingaben
-CATEGORY_DELETED;eng;Kategorie erfolgreich entfernt.
 CHANGE_PASSWORT;de;Passwort ändern
 CONFIRM_DELETION;de;Soll das Objekt wirklich gelöscht werden?
+CONFIRM_PASSWORD;de;Passwort bestätigen
 CREATE_ACCOUNT;de;Konto anlegen
 CREATE_CATEGORY;de;Kategorie angelegen
 CREATE_EXPENSE;de;Ausgabe angelegen
@@ -48,6 +49,7 @@ HISTORY;de;Verlauf
 INTERNAL_ERROR_OCCURRED;de;Es ist ein interner Systemfehler aufgetreten.
 LOADING;de;Lade Daten ...
 LOCKED;de;Gesperrt
+LOGGED_OUT;de;Sie haben erfolgreich ausgeloggt.
 LOGIN;de;Anmelden
 LOGIN_FAILED;de;Benutzername oder Password falsch!
 LOGOUT;de;Abmelden
@@ -55,6 +57,7 @@ MY_ACCOUNT;de;Mein Konto
 NAME;de;Name
 NAME_ALREADY_IN_USE;de;Name bereits vergeben
 NEW;de;Neu
+NEW_PASSWORD;de;Neues Passwort
 NEW_VALUE;de;Neuer Wert
 NO;de;Nein
 NOTE;de;Bemerkung
@@ -81,4 +84,5 @@ TOTAL_EXPENSES_MONTH;de;Ausgaben laufender Monat
 TOTAL_EXPENSES_YEAR;de;Jahresausgaben
 TOTAL_VALUE;de;Gesamtwert
 UPDATED_BY;de;Aktualisiert von
+USERNAME;de;Benutzername
 YES;de;Ja

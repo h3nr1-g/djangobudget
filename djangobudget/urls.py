@@ -19,7 +19,7 @@ urlpatterns = [
         auth_views.LoginView.as_view(template_name='users/login.html', authentication_form=UserLoginForm),
         name='login'
     ),
-    path('auth/logout', auth_views.LogoutView.as_view(template_name='users/login.html'), name='logout'),
+    path('auth/logout', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
 ]
 
 try:
