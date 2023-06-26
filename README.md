@@ -76,5 +76,3 @@ For docker deployments a rebuild of the application image is necessary. All CSV 
 Copyright © Henry Glueck. Distributed under the GNU Lesser General Public License v2.1. See the file [LICENSE](/LICENSE).
 
 This project includes code from Django framework. Django is released under modified BSD license.
-
-Fixtures with book details used for testing purposes and by demo site are based on data dumps from [Open Library](https://openlibrary.org/).
