@@ -69,7 +69,10 @@ python3 manage.py runserver
 ```
 
 ### Note
-For docker deployments a rebuild of the application image is necessary. All CSV files in common/res/lang will be loaded automatically.
+For docker deployments a rebuild of the application image is necessary. Afterwards the new language can be loaded via following command:
+```shell
+docker-compose exec app python manage.py loadlang common/res/lang/mylang.csv
+```
 
 
 ## License
