@@ -70,3 +70,6 @@ python3 manage.py runserver
 
 ### Note
 For docker deployments a rebuild of the application image is necessary. All CSV files in common/res/lang will be loaded automatically.
+
+# Licence
+Software licenced under [GPLv2](gnu-gpl-v2.0.md)
