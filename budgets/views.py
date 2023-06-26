@@ -261,7 +261,7 @@ class ExpenseAddView(BudgetView):
         if not permission_check(budget, request.user, 'write'):
             raise PermissionDenied()
         ctx = self.build_ctx(request, budget)
-        return render(request, 'common/formpage.html', ctx)
+        return render(request, 'budgets/expense.html', ctx)
 
     def post(self, request, bid):
         budget = get_object_or_404(Budget, id=bid)
@@ -280,7 +280,7 @@ class ExpenseAddView(BudgetView):
             return redirect('budgets:expense_details', bid=bid, eid=exp.id)
         messages.error(request, TranslationEntry.get('EXPENSE_CREATION_FAILED'))
         ctx = self.build_ctx(request, budget, form)
-        return render(request, 'common/formpage.html', ctx)
+        return render(request, 'budgets/expense.html', ctx)
 
     def build_ctx(self, request, budget, form=None):
         used_form = form or build_expense_form(request, budget)
@@ -334,6 +334,7 @@ class ExpenseDetailsView(BudgetView):
             **formpage_ctx(request, budget, used_form,
                            reverse('budgets:expense_details', args=(budget.id, expense.id))),
             'title': expense.name,
+            'instance': expense,
             'table_title': TranslationEntry.get('HISTORY'),
             'table': ExpenseModificationsTable(
                 ExpenseModification.objects.filter(expense=expense).order_by('-timestamp')
@@ -347,7 +348,7 @@ class ExpensesTableView(BudgetView):
         ctx = {
             **common_ctx(request, budget),
             'table': ExpensesTable(Expense.objects.filter(budget=budget).order_by('-created')),
-            'title': TranslationEntry.get('EXPENSES', 'de'),
+            'title': TranslationEntry.get('EXPENSES'),
         }
         return render(request, 'common/tables/tablepage.html', ctx)
 

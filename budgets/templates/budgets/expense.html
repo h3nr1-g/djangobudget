@@ -5,9 +5,11 @@
 {% block js_css %}
 <script src="{% static "budgets/js/expense.js" %}"></script>
 <link rel="stylesheet" href="{% static "budgets/css/expense.css" %}">
+{% if instance %}
 <script>
     addBtnInterval = setInterval(addCategoryDeleteButton, 100);
 </script>
+{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -32,14 +34,16 @@
     </div>
 </div>
 
-
+{%if table %}
 <div class="row">
 
  {% with title=table_title %}
         {% include "common/tables/card.html" %}
  {% endwith %}
 </div>
+{% endif %}
 
+{% if instance %}
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -52,4 +56,6 @@
         </div>
     </div>
 </div>
+{% endif %}
+
 {% endblock %}
