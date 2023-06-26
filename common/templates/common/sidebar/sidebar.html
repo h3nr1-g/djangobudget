@@ -105,7 +105,7 @@
                         </li>
                     </ul>
                 </li>
-                {%if request.user == budget.owner %}
+                {%if request.user == budget.owner or request.user.is_superuser %}
                 <li class="nav-item">
                     <a href="{% url "budgets:edit" budget.id %}" class="nav-link">
                         <i class="nav-icon fas fa-gear"></i>

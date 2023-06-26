@@ -62,8 +62,11 @@ def build_category_form(request, budget, instance=None):
         instance=instance,
         data=request.POST if request.POST else None,
     )
-    category_choices = [(None, None)] + [(c.id, c.name) for c in
-                                         Category.objects.filter(budget=budget).order_by('name')]
+    category_choices = [(None, None)] + [
+        (c.id, c.name)
+        for c in Category.objects.filter(budget=budget).order_by('name')
+        if instance is None or c != instance
+    ]
     form.fields['parent'].choices = category_choices
     form.fields['parent'].widget.choices = category_choices
 
