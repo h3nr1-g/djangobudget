@@ -17,7 +17,7 @@ DATABASES = {
         'NAME': os.environ.get('MYSQL_DATABASE','djangobudget'),
         'USER': os.environ.get('MYSQL_USER','djangobudget'),
         'PASSWORD': os.environ.get('MYSQL_PASSWORD','djangobudget'),
-        'HOST': os.environ.get('MYSQL_SERVER','localhost'),
+        'HOST': os.environ.get('MYSQL_HOST','localhost'),
         'PORT': int(os.environ.get('MYSQL_PORT','3306')),
         'OPTIONS': {
               'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"

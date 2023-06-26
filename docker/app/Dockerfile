@@ -16,6 +16,7 @@ RUN pip3 install  mysqlclient gunicorn
 RUN sed -i 's|djangobudget.settings.dev|djangobudget.settings.prod|g' manage.py
 
 RUN python manage.py collectstatic --noinput --no-color
+RUN python manage.py makemigrations budgets users common
 
 RUN rm -rf /etc/nginx/sites-*
 RUN mv docker/app/nginx.conf /etc/nginx/nginx.conf

@@ -1,0 +1,34 @@
+[
+  {
+    "model": "budgets.budget",
+    "pk": 1,
+    "fields": {
+      "name": "Budget 1",
+      "owner": 1,
+      "note": "Sample Budget",
+      "currency": 1,
+      "read_access": [
+        1
+      ],
+      "write_access": [
+        1
+      ]
+    }
+  },
+  {
+    "model": "budgets.currency",
+    "pk": 1,
+    "fields": {
+      "name": "Euro",
+      "symbol": "€"
+    }
+  },
+  {
+    "model": "budgets.currency",
+    "pk": 2,
+    "fields": {
+      "name": "Dollar",
+      "symbol": "$"
+    }
+  }
+]
