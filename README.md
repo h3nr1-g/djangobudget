@@ -79,3 +79,5 @@ docker-compose exec app python manage.py loadlang common/res/lang/mylang.csv
 Copyright © Henry Glueck. Distributed under the GNU Lesser General Public License v2.1. See the file [LICENSE](/LICENSE).
 
 This project includes code from Django framework. Django is released under modified BSD license.
+
+This project includes code from AdminLTE project. AdminLTE is released under modified MIT license.
