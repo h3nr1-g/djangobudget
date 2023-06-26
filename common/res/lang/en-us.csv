@@ -72,6 +72,7 @@ PARENT_CATEGORY;en-us;Parent category
 PASSWORDS_NOT_IDENTICAL;en-us;Old and new password are not the same.
 PASSWORD_UPDATED;en-us;Password updated successfully.
 PERMISSION_DENIED;en-us;Permission denied
+READ_ACCESS;en-us;Read access
 REMAINING_BUDGET;en-us;Remaining budget
 REPORT;en-us;Report
 SAVE;en-us;Save
@@ -85,4 +86,5 @@ TOTAL_EXPENSES_YEAR;en-us;Total expenses this year
 TOTAL_VALUE;en-us;Total value
 UPDATED_BY;en-us;Updated by
 USERNAME;en-us;Username
+WRITE_ACCESS;en-us;Write access
 YES;en-us;Yes

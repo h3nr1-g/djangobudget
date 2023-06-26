@@ -37,8 +37,14 @@ class Budget(models.Model):
         null=True,
         on_delete=models.SET_NULL,
     )
-    read_access = models.ManyToManyField(User, related_name='read')
-    write_access = models.ManyToManyField(User, related_name='write')
+    read_access = models.ManyToManyField(
+        User,
+        related_name='read',
+    )
+    write_access = models.ManyToManyField(
+        User,
+        related_name='write',
+    )
 
     def __str__(self):
         return self.name

@@ -72,6 +72,7 @@ PARENT_CATEGORY;de;Oberkategorie
 PASSWORDS_NOT_IDENTICAL;de;Passwörter stimmen nicht über ein
 PASSWORD_UPDATED;de;Passwort erfolgreich geändert
 PERMISSION_DENIED;de;Sie sind nicht berechtigt auf diese Seite zu zugreifen
+READ_ACCESS;de;Lesezugriff
 REMAINING_BUDGET;de;Restbudget
 REPORT;de;Bericht
 SAVE;de;Speichern
@@ -85,4 +86,5 @@ TOTAL_EXPENSES_YEAR;de;Jahresausgaben
 TOTAL_VALUE;de;Gesamtwert
 UPDATED_BY;de;Aktualisiert von
 USERNAME;de;Benutzername
+WRITE_ACCESS;de;Schreibzugriff
 YES;de;Ja

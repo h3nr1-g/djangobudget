@@ -31,10 +31,20 @@ class BudgetEditForm(forms.ModelForm):
         empty_label=None,
         label='OWNER'
     )
+    read_access = forms.ModelMultipleChoiceField(
+        queryset=User.objects.all(),
+        label='READ_ACCESS',
+        required=False,
+    )
+    write_access = forms.ModelMultipleChoiceField(
+        queryset=User.objects.all(),
+        label='WRITE_ACCESS',
+        required=False,
+    )
 
     class Meta:
         model = Budget
-        fields = ['name', 'note', 'currency', 'owner']
+        fields = ['name', 'note', 'currency', 'owner', 'read_access', 'write_access']
 
 
 class AccountForm(forms.ModelForm):
