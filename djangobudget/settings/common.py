@@ -17,6 +17,8 @@ from django.contrib import messages
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get('DJANGOBUDGET_SECRET_KEY','django-insecure-=#i*natu9b%=uqk&qp@p@-lxq%5mri@@#ac*n(5m0#daxm')
 
 # Application definition
 INSTALLED_APPS = [

@@ -18,8 +18,9 @@ function init_db () {
     echo "Database $MYSQL_DATABASE empty. Run initial migrations ..."
     python manage.py migrate
     echo "Load languages ..."
-    python manage.py loadlang common/res/lang/de.csv
-    python manage.py loadlang common/res/lang/en-us.csv
+    for file in $(ls common/res/lang); do
+        python manage.py loadlang common/res/lang/$file
+    done
     echo "Create admin account"
     python manage.py createsuperuser --noinput
     echo "Create sample budget"

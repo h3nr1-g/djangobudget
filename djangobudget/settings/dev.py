@@ -20,9 +20,6 @@ NOSE_ARGS = [
 
 MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware"] + MIDDLEWARE
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'FOOBAR1234'
-
 ALLOWED_HOSTS = ['*']
 
 # Database
