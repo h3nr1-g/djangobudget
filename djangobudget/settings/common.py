@@ -18,7 +18,7 @@ from django.contrib import messages
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGOBUDGET_SECRET_KEY','django-insecure-=#i*natu9b%=uqk&qp@p@-lxq%5mri@@#ac*n(5m0#daxm')
+SECRET_KEY = os.environ.get('DJANGOBUDGET_SECRET_KEY', 'django-insecure-=#i*natu9b%=uqk&qp@p@-lxq%5mri@@#ac*n(5m0#daxm')
 
 # Application definition
 INSTALLED_APPS = [
@@ -40,7 +40,6 @@ PROJECT_APPS = [
     'budgets',
 ]
 INSTALLED_APPS += PROJECT_APPS
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -71,13 +70,12 @@ TEMPLATES = [
 ]
 
 MESSAGE_TAGS = {
-        messages.DEBUG: 'alert-secondary',
-        messages.INFO: 'alert-info',
-        messages.SUCCESS: 'alert-success',
-        messages.WARNING: 'alert-warning',
-        messages.ERROR: 'alert-danger',
+    messages.DEBUG: 'alert-secondary',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
 }
-
 
 WSGI_APPLICATION = 'djangobudget.wsgi.application'
 
@@ -101,17 +99,15 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LOGIN_URL = '/auth/login'
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
-LANGUAGE_CODE = os.environ.get('DJANGOBUDGET_LANG','en-us')
-TIME_ZONE = os.environ.get('DJANGOBUDGET_TIMEZONE','Europe/Berlin')
+LANGUAGE_CODE = os.environ.get('DJANGOBUDGET_LANG', 'en-us')
+TIME_ZONE = os.environ.get('DJANGOBUDGET_TIMEZONE', 'Europe/Berlin')
 USE_I18N = True
-#USE_TZ = True
+# USE_TZ = True
 
 DATE_INPUT_FORMATS = ['%d.%m.%Y', '%d-%m-%Y', '%Y-%m-%d', '%m/%d/%Y']
 DATE_FORMAT = '%d.%m.%Y'
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -120,11 +116,9 @@ STATIC_ROOT = BASE_DIR.joinpath('static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR.joinpath('media')
 
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 DJANGO_TABLES2_TABLE_ATTRS = {
     'class': 'table table-striped',
@@ -132,7 +126,7 @@ DJANGO_TABLES2_TABLE_ATTRS = {
 }
 
 BOOTSTRAP4 = {
-    'success_css_class':'',
+    'success_css_class': '',
 }
 
 BOOTSTRAP_DATEPICKER_PLUS = {

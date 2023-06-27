@@ -264,7 +264,7 @@ class ExpenseAddView(BudgetView):
         if not permission_check(budget, request.user, 'write'):
             raise PermissionDenied()
         ctx = self.build_ctx(request, budget)
-        return render(request, 'budgets/expense.html', ctx)
+        return render(request, 'common/formpage.html', ctx)
 
     def post(self, request, bid):
         budget = get_object_or_404(Budget, id=bid)
@@ -283,7 +283,7 @@ class ExpenseAddView(BudgetView):
             return redirect('budgets:expense_details', bid=bid, eid=exp.id)
         messages.error(request, TranslationEntry.get('EXPENSE_CREATION_FAILED'))
         ctx = self.build_ctx(request, budget, form)
-        return render(request, 'budgets/expense.html', ctx)
+        return render(request, 'common/formpage.html', ctx)
 
     def build_ctx(self, request, budget, form=None):
         used_form = form or build_expense_form(request, budget)

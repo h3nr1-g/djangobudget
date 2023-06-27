@@ -1,4 +1,4 @@
-from ajax_select.fields import AutoCompleteSelectField
+from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectMultipleField
 from bootstrap_datepicker_plus.widgets import DatePickerInput
 from django import forms
 from django.conf import settings
@@ -31,13 +31,13 @@ class BudgetEditForm(forms.ModelForm):
         empty_label=None,
         label='OWNER'
     )
-    read_access = forms.ModelMultipleChoiceField(
-        queryset=User.objects.all(),
+    read_access = AutoCompleteSelectMultipleField(
+        'user_read_access',
         label='READ_ACCESS',
         required=False,
     )
-    write_access = forms.ModelMultipleChoiceField(
-        queryset=User.objects.all(),
+    write_access = AutoCompleteSelectMultipleField(
+        'user_write_access',
         label='WRITE_ACCESS',
         required=False,
     )

@@ -178,9 +178,9 @@ class DashboardDataViewTest(TestCase):
 
         self.assertIn('stats', data)
         stats = data.get('stats')
-        self.assertEqual('400,00', stats['expenses'])
-        self.assertEqual('600,00', stats['remaining_budget'])
-        self.assertEqual('1000,00', stats['total_budget'])
+        self.assertEqual('400.00', stats['expenses'])
+        self.assertEqual('600.00', stats['remaining_budget'])
+        self.assertEqual('1000.00', stats['total_budget'])
         self.assertEqual(2, stats['num_accounts'])
 
         self.assertIn('charts', data)
