@@ -12,7 +12,9 @@ class ItemLookup(LookupChannel):
 
     def format_item_display(self, item):
         onclick = f'document.getElementById(\'kill_{item.id}id_{self.suffix}\').click()'
-        return f'<h5 class="as-item ">&bull; {str(item)}' \
+        return f'<div class="as-item h5">' \
                f'<button onclick="{onclick}" style="margin-left: 2px;" type="button" class="btn btn-danger btn-sm">' \
                '<i class="nav-icon fas fa-trash"></i>' \
-               '</button></h5>'
+               '</button> ' \
+               f'{str(item)}' \
+               f'</div>'
